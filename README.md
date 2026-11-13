@@ -1,59 +1,82 @@
-# BlendyStudio
+# Blendy Studio: the Blendy Play portal
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
+The public website for Blendy Play, plus a signed-in area for customers and
+the admin. Angular 19, deployed as a static site that calls the Blendy Play
+backend (`mk-flix-be`).
 
-## Development server
+| Path | Who | What |
+|---|---|---|
+| `/` | Everyone | Product page: what Blendy Play is, screenshots on phone, TV and desktop, and the downloads |
+| `/signin`, `/admin` | Everyone | One sign-in. The admin lands on the dashboard; anyone else lands on their own account |
+| `/account` | Any signed-in user | Their subscription and details (editable), their payments, password change and account deletion |
+| `/dashboard` | Super-admin only | Overview, Users, Payments, Subscriptions |
 
-To start a local development server, run:
+Who counts as the admin is decided by the backend: an account with
+`is_superuser` (create one with `python manage.py createsuperuser`). The
+dashboard API refuses everyone else with 403, and the portal sends them to
+`/account`.
 
-```bash
-ng serve
+## Run it locally
+
+```sh
+npm install
+npx ng serve            # http://localhost:4200
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+It talks to the backend named in `public/config.json`
+(`http://localhost:8000/api` by default), so run `mk-flix-be` alongside it.
 
-## Code scaffolding
+## Configuration
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+`public/config.json` is read when the page loads, not at build time, so one
+build works against any backend:
 
-```bash
-ng generate component component-name
+```json
+{
+  "apiBase": "https://api.example.com/api",
+  "supportEmail": "blendyplay@mainakimani.com"
+}
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+On the backend, add the portal's address to `CORS_ALLOWED_ORIGINS` in
+`mk-flix-be/.env` (for example `https://blendyplay.example.com`), or the
+browser blocks its API calls.
 
-```bash
-ng generate --help
+## Deploy
+
+```sh
+npx ng build            # output in dist/blendy-studio/browser
 ```
 
-## Building
+Upload `dist/blendy-studio/browser` to any static host, then:
 
-To build the project run:
+1. Replace `config.json` there with the production values.
+2. Send unknown paths to `index.html` so `/account`, `/admin` and
+   `/dashboard` load on refresh. For nginx:
 
-```bash
-ng build
-```
+   ```nginx
+   location / {
+     try_files $uri $uri/ /index.html;
+   }
+   ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+   Netlify and Cloudflare Pages: a `_redirects` file with `/* /index.html 200`.
+   Vercel: a rewrite of `/(.*)` to `/index.html`.
+3. Serve it over HTTPS. Sign-in sends passwords and the session tokens
+   live in the browser's localStorage.
 
-## Running unit tests
+## Downloads and screenshots
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- `public/downloads/`: the APK and desktop installers, described by
+  `releases.json`. The binaries are git-ignored; copy them in when you deploy.
+  See `public/downloads/README.md`.
+- `public/screenshots/`: the product page gallery, listed in
+  `screenshots.json`. See `public/screenshots/README.md`.
 
-```bash
-ng test
-```
+## Design
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Same neon identity as the apps' account gate: pure black, the gate's card
+greys, and the mark's cyan, magenta and red. Headings and body use Ubuntu,
+the font of the app's wordmark. Chart fills use deeper steps of the same
+hues (`--chart-*` in `src/styles.scss`), checked for contrast and
+colour-blind separation on the dark cards; revenue uses M-Pesa green.

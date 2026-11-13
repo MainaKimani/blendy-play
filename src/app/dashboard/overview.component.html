@@ -1,0 +1,144 @@
+<div class="head">
+  <div>
+    <h1>Overview</h1>
+    <p class="sub">How Blendy Play is doing over the last {{ days() }} days.</p>
+  </div>
+  <div class="range" role="group" aria-label="Time period">
+    @for (w of windows; track w) {
+      <button type="button" [class.on]="days() === w" [attr.aria-pressed]="days() === w" (click)="load(w)">{{ w }} days</button>
+    }
+  </div>
+</div>
+
+@if (error()) {
+  <p class="form-err" role="alert">{{ error() }}</p>
+}
+
+@if (data(); as d) {
+  <section class="figures" aria-label="Headline figures">
+    @for (f of figures(); track f.label) {
+      <div class="figure">
+        <p class="f-label">{{ f.label }}</p>
+        <p class="f-value">
+          {{ f.value }}
+          @if (f.delta) {
+            <span class="delta {{ deltaTone(f.delta) }}">{{ f.delta === 'new' ? 'new' : f.delta }}</span>
+          }
+        </p>
+        <p class="f-note">{{ f.note }}</p>
+      </div>
+    }
+  </section>
+
+  <div class="charts">
+    <section class="panel chart">
+      <div class="chart-head">
+        <h2>Revenue per day</h2>
+        <button type="button" class="link" (click)="toggleTable('revenue')">{{ tables()['revenue'] ? 'Show chart' : 'Show as table' }}</button>
+      </div>
+      @if (tables()['revenue']) {
+        <div class="table-wrap short">
+          <table>
+            <thead><tr><th scope="col">Day</th><th scope="col">Revenue</th><th scope="col">Payments</th></tr></thead>
+            <tbody>
+              @for (r of d.series; track r.date) {
+                <tr><td>{{ day(r.date) }}</td><td class="num">{{ money(r.revenue) }}</td><td class="num">{{ r.payments }}</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <bp-bar-chart [data]="revenueBars()" color="var(--chart-money)" [height]="220"
+                      [tickFormat]="moneyTick" ariaLabel="Revenue per day in KES" />
+      }
+    </section>
+
+    <section class="panel chart">
+      <div class="chart-head">
+        <h2>New users per day</h2>
+        <button type="button" class="link" (click)="toggleTable('signups')">{{ tables()['signups'] ? 'Show chart' : 'Show as table' }}</button>
+      </div>
+      @if (tables()['signups']) {
+        <div class="table-wrap short">
+          <table>
+            <thead><tr><th scope="col">Day</th><th scope="col">New users</th></tr></thead>
+            <tbody>
+              @for (r of d.series; track r.date) {
+                <tr><td>{{ day(r.date) }}</td><td class="num">{{ r.signups }}</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <bp-bar-chart [data]="signupBars()" color="var(--chart-magenta)" [height]="220"
+                      [tickFormat]="countTick" ariaLabel="New users per day" />
+      }
+    </section>
+  </div>
+
+  <div class="lower">
+    <section class="panel block">
+      <h2>Active subscribers by plan</h2>
+      <div class="plans">
+        @for (p of planRows(); track p.code) {
+          <div class="plan-row">
+            <div class="plan-text">
+              <span>{{ p.name }} <span class="muted">{{ money(p.price, p.currency) }}</span></span>
+              <strong>{{ p.active_subscribers }}</strong>
+            </div>
+            <div class="plan-track"><span [style.width.%]="p.pct" [style.background]="p.color"></span></div>
+            <p class="muted small">{{ money(p.revenue, p.currency) }} earned in the last {{ d.days }} days</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="panel block">
+      <h2>Ending in the next 3 days</h2>
+      @if (d.expiring_soon.length) {
+        <ul class="list">
+          @for (s of d.expiring_soon; track s.id) {
+            <li>
+              <a [routerLink]="['/dashboard/users', s.user.id]">{{ s.user.email }}</a>
+              <span class="muted">{{ s.plan }}, ends {{ dayTime(s.current_period_end) }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">No subscriptions end in the next 3 days.</p>
+      }
+    </section>
+  </div>
+
+  <section class="panel block">
+    <div class="chart-head">
+      <h2>Latest payments</h2>
+      <a class="link" routerLink="/dashboard/payments">All payments</a>
+    </div>
+    @if (d.recent_payments.length) {
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th scope="col">When</th><th scope="col">Customer</th><th scope="col">Plan</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Receipt</th></tr>
+          </thead>
+          <tbody>
+            @for (p of d.recent_payments; track p.id) {
+              <tr>
+                <td>{{ dayTime(p.created_at) }}</td>
+                <td><a [routerLink]="['/dashboard/users', p.user.id]">{{ p.user.email }}</a></td>
+                <td>{{ p.plan ?? '—' }}</td>
+                <td class="num">{{ money(p.amount, p.currency) }}</td>
+                <td><span class="pill {{ pill(p.status).tone }}">{{ pill(p.status).text }}</span></td>
+                <td>{{ p.mpesa_receipt || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="muted">No payments yet.</p>
+    }
+  </section>
+} @else if (!error()) {
+  <div class="spinner"></div>
+}

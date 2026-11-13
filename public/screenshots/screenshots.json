@@ -1,0 +1,44 @@
+{
+  "phone": [
+    {
+      "src": "screenshots/phone-welcome.webp",
+      "caption": "Welcome: create an account or sign in"
+    },
+    {
+      "src": "screenshots/phone-plans.webp",
+      "caption": "Choose a plan and pay with M-Pesa"
+    },
+    {
+      "src": "screenshots/phone-subscription.webp",
+      "caption": "Your subscription at a glance"
+    }
+  ],
+  "tv": [
+    {
+      "src": "screenshots/tv-welcome.webp",
+      "caption": "Welcome: create an account or sign in"
+    },
+    {
+      "src": "screenshots/tv-plans.webp",
+      "caption": "Choose a plan and pay with M-Pesa"
+    },
+    {
+      "src": "screenshots/tv-subscription.webp",
+      "caption": "Your subscription at a glance"
+    }
+  ],
+  "desktop": [
+    {
+      "src": "screenshots/desktop-welcome.webp",
+      "caption": "Welcome: create an account or sign in"
+    },
+    {
+      "src": "screenshots/desktop-plans.webp",
+      "caption": "Choose a plan and pay with M-Pesa"
+    },
+    {
+      "src": "screenshots/desktop-subscription.webp",
+      "caption": "Your subscription at a glance"
+    }
+  ]
+}

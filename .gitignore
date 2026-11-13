@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Release binaries are deployed alongside the site, not committed.
+/public/downloads/*.apk
+/public/downloads/*.zip
+/public/downloads/*.deb
+/public/downloads/*.exe

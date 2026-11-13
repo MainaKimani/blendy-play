@@ -1,0 +1,219 @@
+<header class="top">
+  <a class="brand" routerLink="/" aria-label="Blendy Play home">
+    <img src="brand/mark-192.png" alt="" width="34" height="34">
+    <span class="neon-text">Blendy Play</span>
+  </a>
+  <nav aria-label="Main">
+    <a href="#about" class="hide-s">At a glance</a>
+    <a href="#screenshots" class="hide-s">Screenshots</a>
+    <a href="#download" class="hide-s">Download</a>
+    @if (auth.me(); as me) {
+      <a class="btn ghost small" [routerLink]="me.is_admin ? '/dashboard' : '/account'">
+        {{ me.is_admin ? 'Dashboard' : 'My account' }}
+      </a>
+    } @else {
+      <a class="btn ghost small" routerLink="/signin">Sign in</a>
+    }
+  </nav>
+</header>
+
+<main>
+  <!-- The noise, then the quiet: ads crowd the screen and a neon sweep clears them. -->
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Watch without the noise.</h1>
+      <p class="lede">
+        Blendy Play is the ad-free way to watch films and shows on your phone, your TV and your
+        computer. No pop-ups, no redirects, no trackers. Just the picture.
+      </p>
+      <div class="actions">
+        <a class="btn" href="#download">Download Blendy Play</a>
+        <a class="btn ghost" href="#screenshots">See it in action</a>
+      </div>
+      <p class="from">From {{ money(plans()[0].price, plans()[0].currency) }} a week, paid with M-Pesa.</p>
+    </div>
+
+    <figure class="tv-wrap" aria-label="A screen covered in ads, cleared by Blendy Play">
+      @for (r of [run()]; track r) {
+        <div class="tv">
+          <div class="screen">
+            <div class="scene" aria-hidden="true">
+              <span class="sun"></span>
+              <span class="hill h1"></span>
+              <span class="hill h2"></span>
+            </div>
+            @for (ad of ads; track ad.cls) {
+              <div class="ad {{ ad.cls }}" aria-hidden="true">
+                <span>{{ ad.text }}</span>
+                <i>×</i>
+              </div>
+            }
+            <span class="sweep" aria-hidden="true"></span>
+            <div class="player" aria-hidden="true">
+              <span class="play"></span>
+              <span class="track"><span class="done"></span></span>
+            </div>
+            <span class="blocked">{{ ads.length }} ads blocked</span>
+          </div>
+        </div>
+      }
+      <figcaption>
+        <button type="button" class="replay" (click)="replay()">Play that again</button>
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="story">
+    <div class="story-text">
+      <h2>Streaming shouldn't feel like a minefield.</h2>
+      <p>
+        Free streaming pays for itself with pop-ups, fake download buttons and redirects to places you
+        never meant to go. On a TV remote it's worse: one wrong click and you're three screens deep,
+        hunting for the way back to your film.
+      </p>
+    </div>
+    <div class="story-text">
+      <h2>Blendy clears the room.</h2>
+      <ul class="clears">
+        <li><strong>Ads and trackers</strong> are blocked before they load, so pages are lighter and faster.</li>
+        <li><strong>Pop-ups and redirects</strong> can't take over the screen or send you somewhere else.</li>
+        <li><strong>Fullscreen that fits</strong> the device: landscape on phones, remote-friendly on TVs.</li>
+        <li><strong>Clear messages</strong> when the internet drops, and it reconnects by itself.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="glance" id="about">
+    <h2>Blendy Play at a glance.</h2>
+    <dl class="facts">
+      <div>
+        <dt>Works on</dt>
+        <dd>Android phones (7.0 and later), Android TV and Google TV, Windows 10 and 11, Ubuntu and Debian.</dd>
+      </div>
+      <div>
+        <dt>Costs</dt>
+        <dd>
+          @for (p of plans(); track p.code; let last = $last) {
+            {{ money(p.price, p.currency) }} {{ p.interval === 'WEEK' ? 'a week' : 'a month' }}@if (!last) {, or }
+          }.@if (cheapestPerDay() >= 1) { About {{ money(cheapestPerDay()) }} a day.}
+        </dd>
+      </div>
+      <div>
+        <dt>Paying</dt>
+        <dd>M-Pesa, straight from your phone. No card needed.</dd>
+      </div>
+      <div>
+        <dt>Renewal</dt>
+        <dd>Never automatic. You only pay when you approve a prompt, and paying early adds the days on top.</dd>
+      </div>
+      <div>
+        <dt>Your account</dt>
+        <dd>One Blendy Play account for every screen. Sign in here to see your payments and manage your details.</dd>
+      </div>
+      <div>
+        <dt>Picking up where you left off</dt>
+        <dd>Optional: sign in to CineJoy inside the app (the listing, then Settings, then Login) to carry on across devices.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="shots" id="screenshots">
+    <h2>See it on every screen.</h2>
+    <div class="device-tabs" role="tablist" aria-label="Device">
+      @for (d of deviceList; track d.key) {
+        <button type="button" role="tab" [class.on]="device() === d.key" [attr.aria-selected]="device() === d.key"
+                (click)="pickDevice(d.key)">{{ d.label }}</button>
+      }
+    </div>
+    @if (shots()[device()]; as list) {
+      @if (device() === 'phone') {
+        <div class="phones">
+          @for (s of list; track s.src) {
+            <figure class="phone-frame">
+              <img [src]="s.src" [alt]="s.caption" loading="lazy" width="527" height="1139">
+              <figcaption>{{ s.caption }}</figcaption>
+            </figure>
+          }
+        </div>
+      } @else {
+        <figure class="wide-frame" [class.tv]="device() === 'tv'">
+          <div class="bezel">
+            <img [src]="list[shot()].src" [alt]="list[shot()].caption" width="1600" [attr.height]="device() === 'tv' ? 900 : 1000">
+          </div>
+          <figcaption>
+            @for (s of list; track s.src; let i = $index) {
+              <button type="button" [class.on]="shot() === i" [attr.aria-pressed]="shot() === i" (click)="shot.set(i)">{{ s.caption }}</button>
+            }
+          </figcaption>
+        </figure>
+      }
+    }
+  </section>
+
+  <section class="download" id="download">
+    <h2>Get Blendy Play.</h2>
+    @if (release(); as r) {
+      <p class="section-lede">Version {{ r.version }}, released {{ day(r.date) }}.</p>
+      <div class="files">
+        @for (f of r.files; track f.file) {
+          <div class="file">
+            <span class="os" aria-hidden="true">
+              @switch (f.platform) {
+                @case ('android') {
+                  <svg viewBox="0 0 24 24"><path d="M5 15a7 7 0 0 1 14 0v1H5z" /><path d="M8 9.5 6.5 7M16 9.5 17.5 7" /><circle cx="9.5" cy="12.6" r=".9" /><circle cx="14.5" cy="12.6" r=".9" /></svg>
+                }
+                @case ('windows') {
+                  <svg viewBox="0 0 24 24"><path d="M4 6.5 11 5.5v6H4zM13 5.2 20 4v7.5h-7zM4 12.5h7v6l-7-1zM13 12.5h7V20l-7-1.2z" /></svg>
+                }
+                @default {
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.5" /><path d="m7 10 3 2.5L7 15M12 15.5h5" /></svg>
+                }
+              }
+            </span>
+            <div class="file-text">
+              <h3>{{ f.label }}</h3>
+              <p>{{ f.requires }}</p>
+              <p class="howto">{{ f.howto }}</p>
+            </div>
+            @if (available().has(f.file)) {
+              <a class="btn" [href]="'downloads/' + f.file" download>
+                Download{{ f.size ? ' (' + f.size + ')' : '' }}
+              </a>
+            } @else {
+              <span class="soon">Coming soon</span>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="section-lede">Downloads are being prepared. Check back soon.</p>
+    }
+    <div class="steps">
+      <h3>After installing</h3>
+      <ol>
+        <li><strong>Create your Blendy Play account</strong> in the app with your email and a password.</li>
+        <li><strong>Choose a plan</strong> and approve the M-Pesa prompt on your phone.</li>
+        <li><strong>Press play.</strong> Your account works on all your screens.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="honest">
+    <p>
+      Blendy Play doesn't host films or shows. It's an app for watching content from a third-party
+      platform without the ads, so which titles are available depends on that platform.
+    </p>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-brand">
+    <img src="brand/mark-192.png" alt="" width="28" height="28">
+    <span>Blendy Play, made by Blendy Studio.</span>
+  </div>
+  <div class="foot-links">
+    <a [href]="'mailto:' + config.supportEmail">{{ config.supportEmail }}</a>
+    <a routerLink="/signin">Sign in</a>
+  </div>
+  <p class="copy">© {{ year }} Blendy Studio</p>
+</footer>
