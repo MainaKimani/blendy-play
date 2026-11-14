@@ -3,7 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from './config.service';
 import {
-  AdminPayment, AdminSubscription, AdminUser, Me, MyPayment, MySubscription, Overview, Page, Plan, Release,
+  AdminPayment, AdminPlan, AdminPlanChanges, AdminSubscription, AdminSubscriptionChanges, AdminUser,
+  AdminUserChanges, Me, MyPayment, MySubscription, Overview, Page, Plan, Release,
 } from './models';
 
 type Query = Record<string, string | number | undefined>;
@@ -61,6 +62,15 @@ export class ApiService {
   overview = (days: number) => this.get<Overview>('/dashboard/overview', { days });
   users = (q: Query) => this.get<Page<AdminUser>>('/dashboard/users', q);
   user = (id: string) => this.get<AdminUser>(`/dashboard/users/${id}`);
+  updateUser = (id: string, body: AdminUserChanges) =>
+    firstValueFrom(this.http.patch<AdminUser>(this.url(`/dashboard/users/${id}`), body));
+  updateSubscription = (id: string, body: AdminSubscriptionChanges) =>
+    firstValueFrom(this.http.patch<AdminUser>(this.url(`/dashboard/users/${id}/subscription`), body));
+  adminPlans = () => this.get<AdminPlan[]>('/dashboard/plans');
+  createPlan = (body: AdminPlanChanges) => firstValueFrom(this.http.post<AdminPlan>(this.url('/dashboard/plans'), body));
+  updatePlan = (id: string, body: AdminPlanChanges) =>
+    firstValueFrom(this.http.patch<AdminPlan>(this.url(`/dashboard/plans/${id}`), body));
+  deletePlan = (id: string) => firstValueFrom(this.http.delete<void>(this.url(`/dashboard/plans/${id}`)));
   payments = (q: Query) => this.get<Page<AdminPayment>>('/dashboard/payments', q);
   subscriptions = (q: Query) =>
     this.get<Page<AdminSubscription> & { state_counts: Record<string, number> }>('/dashboard/subscriptions', q);

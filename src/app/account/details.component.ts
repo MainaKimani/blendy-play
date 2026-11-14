@@ -23,7 +23,9 @@ import { subscriptionPill } from '../shared/status';
           }
         </div>
         <p class="muted">
-          @if (s.active) {
+          @if (s.active && !s.current_period_end) {
+            Your subscription is active.
+          } @else if (s.active) {
             Your plan runs until {{ day(s.current_period_end) }}. To add more time, choose a plan in the app.
           } @else if (s.current_period_end) {
             Your plan ended on {{ day(s.current_period_end) }}. Choose a plan in the app to keep watching.

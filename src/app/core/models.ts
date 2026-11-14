@@ -46,6 +46,7 @@ export interface MyPayment {
 }
 
 export type PaymentStatus = 'INITIATED' | 'PENDING' | 'SUCCEEDED' | 'FAILED' | 'CANCELLED';
+export type SubStatus = 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
 export type SubState = 'NONE' | 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
 
 export interface AdminPayment {
@@ -70,6 +71,7 @@ export interface AdminSubscription {
   plan: string | null;
   status: string;
   state: SubState;
+  lifetime: boolean;
   started_at: string | null;
   current_period_end: string | null;
   updated_at: string;
@@ -79,15 +81,59 @@ export interface AdminUser {
   id: string;
   email: string;
   name: string;
+  first_name: string;
+  last_name: string;
   phone_number: string;
   is_active: boolean;
+  email_verified: boolean;
+  /** Deleted by its owner: anonymised and not editable. */
+  is_deleted: boolean;
   has_cinejoy_account: boolean;
   created_at: string;
-  subscription: { state: SubState; plan: string | null; current_period_end: string | null };
+  subscription: {
+    state: SubState;
+    status: SubStatus | null;
+    plan: string | null;
+    plan_code: string | null;
+    started_at: string | null;
+    /** Admin-granted, no end date (current_period_end is null). */
+    lifetime: boolean;
+    current_period_end: string | null;
+  };
   payments_count: number | null;
   total_paid: string;
   payments?: AdminPayment[];
 }
+
+export type AdminUserChanges = Partial<
+  Pick<AdminUser, 'first_name' | 'last_name' | 'email' | 'phone_number' | 'is_active' | 'email_verified'>
+>;
+
+export interface AdminSubscriptionChanges {
+  plan?: string | null;
+  status?: SubStatus;
+  current_period_end?: string | null;
+  add_days?: number;
+  lifetime?: boolean;
+}
+
+export interface AdminPlan {
+  id: string;
+  code: string;
+  name: string;
+  price: string;
+  currency: string;
+  interval: 'WEEK' | 'MONTH';
+  duration_days: number;
+  /** Shown on the paywall. Hidden plans stay for history. */
+  is_active: boolean;
+  created_at: string;
+  active_subscribers: number;
+  payments_count: number;
+  revenue: string;
+}
+
+export type AdminPlanChanges = Partial<Pick<AdminPlan, 'code' | 'name' | 'price' | 'interval' | 'duration_days' | 'is_active'>>;
 
 export interface Overview {
   days: number;

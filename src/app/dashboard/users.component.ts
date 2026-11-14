@@ -43,9 +43,9 @@ import { ListBase } from './list-base';
                 <tr>
                   <td><a [routerLink]="u.id"><strong>{{ u.name || u.email }}</strong></a>@if (u.name) {<br><span class="muted">{{ u.email }}</span>}</td>
                   <td>{{ phone(u.phone_number) }}</td>
-                  <td><span class="pill {{ pill(u.subscription.state).tone }}">{{ pill(u.subscription.state).text }}</span>
+                  <td><span class="pill {{ u.subscription.lifetime ? 'ok' : pill(u.subscription.state).tone }}">{{ u.subscription.lifetime ? 'Lifetime' : pill(u.subscription.state).text }}</span>
                     @if (u.subscription.plan) { <span class="muted plan">{{ u.subscription.plan }}</span> }</td>
-                  <td>{{ day(u.subscription.current_period_end) }}</td>
+                  <td>{{ u.subscription.lifetime ? 'Never' : day(u.subscription.current_period_end) }}</td>
                   <td class="num">{{ money(u.total_paid) }}</td>
                   <td>{{ u.has_cinejoy_account ? 'Saved' : '—' }}</td>
                   <td>{{ day(u.created_at) }}</td>
@@ -71,6 +71,7 @@ export class UsersComponent extends ListBase<Page<AdminUser>> implements OnInit 
     { value: 'expired', label: 'Expired' },
     { value: 'cancelled', label: 'Cancelled' },
     { value: 'none', label: 'Never subscribed' },
+    { value: 'lifetime', label: 'Lifetime' },
   ];
   money = money;
   day = day;

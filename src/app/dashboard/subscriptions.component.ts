@@ -45,9 +45,9 @@ type SubPage = Page<AdminSubscription> & { state_counts: Record<string, number> 
                 <tr>
                   <td><a [routerLink]="['/dashboard/users', s.user.id]">{{ s.user.email }}</a></td>
                   <td>{{ s.plan ?? '—' }}</td>
-                  <td><span class="pill {{ pill(s.state).tone }}">{{ pill(s.state).text }}</span></td>
+                  <td><span class="pill {{ s.lifetime ? 'ok' : pill(s.state).tone }}">{{ s.lifetime ? 'Lifetime' : pill(s.state).text }}</span></td>
                   <td>{{ day(s.started_at) }}</td>
-                  <td>{{ day(s.current_period_end) }}</td>
+                  <td>{{ s.lifetime ? 'Never' : day(s.current_period_end) }}</td>
                   <td class="muted">{{ day(s.updated_at) }}</td>
                 </tr>
               }

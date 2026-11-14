@@ -11,6 +11,7 @@ export const DASHBOARD_ROUTES: Routes = [
       { path: 'users', title: 'Users · Blendy Studio', loadComponent: () => import('./users.component').then((m) => m.UsersComponent) },
       { path: 'users/:id', title: 'User · Blendy Studio', loadComponent: () => import('./user-detail.component').then((m) => m.UserDetailComponent) },
       { path: 'payments', title: 'Payments · Blendy Studio', loadComponent: () => import('./payments.component').then((m) => m.PaymentsComponent) },
+      { path: 'plans', title: 'Plans · Blendy Studio', loadComponent: () => import('./plans.component').then((m) => m.PlansComponent) },
       { path: 'subscriptions', title: 'Subscriptions · Blendy Studio', loadComponent: () => import('./subscriptions.component').then((m) => m.SubscriptionsComponent) },
     ],
   },
