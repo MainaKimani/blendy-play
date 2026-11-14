@@ -19,7 +19,7 @@ import { ListBase } from './list-base';
       </div>
     </div>
     <div class="toolbar">
-      <input class="input" type="search" placeholder="Search email, phone or receipt" aria-label="Search payments"
+      <input class="input" type="search" placeholder="Search email, phone, receipt or reference" aria-label="Search payments"
              [value]="search()" (input)="onSearch($any($event.target).value)">
       <div class="chips" role="group" aria-label="Filter by status">
         @for (f of filters; track f.value) {
