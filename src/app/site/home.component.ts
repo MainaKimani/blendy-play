@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { ConfigService } from '../core/config.service';
-import { Plan, Release } from '../core/models';
+import { Plan, Release, ReleaseFile, ReleasePlatform } from '../core/models';
 import { day, money } from '../core/format';
 
 /** Shown until (or if) the backend's live plans load. */
@@ -42,6 +42,16 @@ export class HomeComponent implements OnInit {
   money = money;
   day = day;
 
+  /** The downloads in a fixed order: phones and TVs first, then desktop. */
+  files = computed<(ReleaseFile & { platform: ReleasePlatform })[]>(() => {
+    const p = this.release()?.platforms ?? {};
+    return (['android', 'windows', 'linux'] as const).filter((k) => p[k]).map((k) => ({ ...p[k]!, platform: k }));
+  });
+
+  sizeLabel(bytes: number): string {
+    return bytes ? `${Math.max(1, Math.round(bytes / 1048576))} MB` : '';
+  }
+
   cheapestPerDay = computed(() => {
     const per = this.plans().map((p) => Number(p.price) / (p.duration_days ?? (p.interval === 'WEEK' ? 7 : 30)));
     return Math.round(Math.min(...per));
@@ -59,7 +69,7 @@ export class HomeComponent implements OnInit {
         this.release.set(r);
         const found = new Set<string>();
         await Promise.all(
-          r.files.map((f) =>
+          this.files().map((f) =>
             firstValueFrom(this.http.head(`/downloads/${f.file}`, { observe: 'response', responseType: 'text' }))
               .then((res) => {
                 // SPA hosts answer unknown paths with index.html; only a non-HTML file counts.

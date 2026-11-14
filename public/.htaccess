@@ -1,0 +1,37 @@
+# Apache (cPanel) settings for blendy.mainakimani.com.
+
+# Single-page app: send any path that isn't a real file or folder to
+# index.html, so /account, /admin, /reset-password load on refresh.
+# Real files, including everything under /downloads/, are served as they are.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^downloads/ - [R=404,L]
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # The release manifest and its signature: always fetch the latest.
+  <FilesMatch "^releases\.json(\.sig)?$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+  # The page and its settings change on every deploy.
+  <FilesMatch "^(index\.html|config\.json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # Installers and hashed build files never change under the same name.
+  <FilesMatch "\.(apk|exe|deb|js|css|woff2|webp|png)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  Header always set Referrer-Policy "no-referrer"
+  Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Serve installers as downloads with the right types.
+AddType application/vnd.android.package-archive .apk
+AddType application/vnd.debian.binary-package .deb
+AddType application/x-msdownload .exe

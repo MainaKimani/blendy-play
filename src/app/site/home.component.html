@@ -142,7 +142,7 @@
     @if (release(); as r) {
       <p class="section-lede">Version {{ r.version }}, released {{ day(r.date) }}.</p>
       <div class="files">
-        @for (f of r.files; track f.file) {
+        @for (f of files(); track f.file) {
           <div class="file">
             <span class="os" aria-hidden="true">
               @switch (f.platform) {
@@ -164,7 +164,7 @@
             </div>
             @if (available().has(f.file)) {
               <a class="btn" [href]="'downloads/' + f.file" download>
-                Download{{ f.size ? ' (' + f.size + ')' : '' }}
+                Download{{ f.size ? ' (' + sizeLabel(f.size) + ')' : '' }}
               </a>
             } @else {
               <span class="soon">Coming soon</span>

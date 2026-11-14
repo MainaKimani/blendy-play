@@ -41,8 +41,6 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Release binaries are deployed alongside the site, not committed.
-/public/downloads/*.apk
-/public/downloads/*.zip
-/public/downloads/*.deb
-/public/downloads/*.exe
+# The downloads folder (installers + signed releases.json) is uploaded to the
+# server by the release tool's output, never deployed from here.
+/public/downloads/

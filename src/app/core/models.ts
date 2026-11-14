@@ -111,17 +111,29 @@ export interface Overview {
   recent_payments: AdminPayment[];
 }
 
+/**
+ * The signed release manifest, /downloads/releases.json, written by
+ * mk-flix/release/publish.mjs. The apps verify its signature before trusting
+ * it; the website only uses it to list the downloads.
+ */
 export interface Release {
+  schema: number;
   version: string;
   date: string;
-  files: ReleaseFile[];
+  notes: string[];
+  platforms: Partial<Record<'android' | 'windows' | 'linux', ReleaseFile>>;
 }
 
 export interface ReleaseFile {
-  platform: 'android' | 'windows' | 'linux';
-  label: string;
+  version: string;
+  minimum_version: string | null;
+  /** Relative to /downloads/, e.g. "1.5.0/Blendy-Play_1.5.0.apk". */
   file: string;
-  size?: string;
+  size: number;
+  sha256: string;
+  label: string;
   requires: string;
   howto: string;
 }
+
+export type ReleasePlatform = keyof Release['platforms'];
