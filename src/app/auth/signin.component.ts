@@ -2,6 +2,7 @@ import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { PasswordInputComponent } from '../shared/password-input.component';
 import { errorMessage } from '../core/errors';
 
 /**
@@ -10,7 +11,7 @@ import { errorMessage } from '../core/errors';
  */
 @Component({
   selector: 'bp-signin',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, PasswordInputComponent],
   template: `
     <main class="wrap">
       <a class="brand" routerLink="/" aria-label="Blendy Play home">
@@ -32,7 +33,7 @@ import { errorMessage } from '../core/errors';
         </label>
         <label class="field">
           <span>Password</span>
-          <input class="input" type="password" name="password" autocomplete="current-password" required [(ngModel)]="password">
+          <bp-password-input name="password" autocomplete="current-password" [(ngModel)]="password" />
         </label>
         @if (error()) {
           <p class="form-err" role="alert">{{ error() }}</p>

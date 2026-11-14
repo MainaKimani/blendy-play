@@ -4,26 +4,27 @@ import { Router } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { errorMessage, fieldErrors } from '../core/errors';
+import { PasswordInputComponent } from '../shared/password-input.component';
 
 @Component({
   selector: 'bp-security',
-  imports: [FormsModule],
+  imports: [FormsModule, PasswordInputComponent],
   template: `
     <form class="panel block" (ngSubmit)="changePassword()" novalidate>
       <h2>Change password</h2>
       <div class="grid">
         <label class="field">
           <span>Current password</span>
-          <input class="input" type="password" name="current" autocomplete="current-password" [(ngModel)]="pw.current">
+          <bp-password-input name="current" autocomplete="current-password" [(ngModel)]="pw.current" />
           @if (pwErrors()['current_password']) { <span class="err">{{ pwErrors()['current_password'] }}</span> }
         </label>
         <label class="field">
           <span>New password</span>
-          <input class="input" type="password" name="next" autocomplete="new-password" [(ngModel)]="pw.next">
+          <bp-password-input name="next" autocomplete="new-password" describedBy="new-pw-hint" [(ngModel)]="pw.next" />
+          <span class="hint" id="new-pw-hint">At least 6 characters, and not all numbers.</span>
           @if (pwErrors()['new_password']) { <span class="err">{{ pwErrors()['new_password'] }}</span> }
         </label>
       </div>
-      <p class="hint">At least 8 characters, not all numbers, and not too close to your email.</p>
       <div class="row">
         <button class="btn" type="submit" [disabled]="pwBusy()">{{ pwBusy() ? 'Changing…' : 'Change password' }}</button>
         @if (pwDone()) { <span class="form-ok" role="status">Password changed.</span> }
@@ -44,7 +45,7 @@ import { errorMessage, fieldErrors } from '../core/errors';
         <form class="confirm" (ngSubmit)="deleteAccount()" novalidate>
           <label class="field">
             <span>Enter your password to delete your account</span>
-            <input class="input" type="password" name="delpw" autocomplete="current-password" [(ngModel)]="delPassword">
+            <bp-password-input name="delpw" autocomplete="current-password" [(ngModel)]="delPassword" />
           </label>
           @if (delError()) { <span class="form-err" role="alert">{{ delError() }}</span> }
           <div class="row">
