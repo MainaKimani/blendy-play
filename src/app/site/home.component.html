@@ -18,8 +18,10 @@
 </header>
 
 <main>
-  <!-- The noise, then the quiet: ads crowd the screen and a neon sweep clears them. -->
+  <!-- The app itself is the hero: the real Blendy Play home screen, with the pitch laid over it. -->
   <section class="hero">
+    <img class="hero-bg" src="screenshots/hero-app.webp" width="1700" height="890" fetchpriority="high"
+         alt="The Blendy Play home screen, with a featured film and a Continue Watching row">
     <div class="hero-copy">
       <h1>Watch without the noise.</h1>
       <p class="lede">
@@ -32,35 +34,6 @@
       </div>
       <p class="from">From {{ money(plans()[0].price, plans()[0].currency) }} a week, paid with M-Pesa.</p>
     </div>
-
-    <figure class="tv-wrap" aria-label="A screen covered in ads, cleared by Blendy Play">
-      @for (r of [run()]; track r) {
-        <div class="tv">
-          <div class="screen">
-            <div class="scene" aria-hidden="true">
-              <span class="sun"></span>
-              <span class="hill h1"></span>
-              <span class="hill h2"></span>
-            </div>
-            @for (ad of ads; track ad.cls) {
-              <div class="ad {{ ad.cls }}" aria-hidden="true">
-                <span>{{ ad.text }}</span>
-                <i>×</i>
-              </div>
-            }
-            <span class="sweep" aria-hidden="true"></span>
-            <div class="player" aria-hidden="true">
-              <span class="play"></span>
-              <span class="track"><span class="done"></span></span>
-            </div>
-            <span class="blocked">{{ ads.length }} ads blocked</span>
-          </div>
-        </div>
-      }
-      <figcaption>
-        <button type="button" class="replay" (click)="replay()">Play that again</button>
-      </figcaption>
-    </figure>
   </section>
 
   <section class="story">
@@ -72,15 +45,29 @@
         hunting for the way back to your film.
       </p>
     </div>
-    <div class="story-text">
-      <h2>Blendy clears the room.</h2>
-      <ul class="clears">
-        <li><strong>Ads and trackers</strong> are blocked before they load, so pages are lighter and faster.</li>
-        <li><strong>Pop-ups and redirects</strong> can't take over the screen or send you somewhere else.</li>
-        <li><strong>Fullscreen that fits</strong> the device: landscape on phones, remote-friendly on TVs.</li>
-        <li><strong>Clear messages</strong> when the internet drops, and it reconnects by itself.</li>
-      </ul>
-    </div>
+    <h2 class="clears-head">Blendy clears the room.</h2>
+    <ul class="clears">
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.3 3 7.9 7 9.5 4-1.6 7-5.2 7-9.5V6z" /><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
+        <h3>Ads and trackers</h3>
+        <p>Blocked before they load, so pages are lighter and faster.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5" /><path d="m9.5 9.5 5 5M14.5 9.5l-5 5" /></svg>
+        <h3>Pop-ups and redirects</h3>
+        <p>They can't take over the screen or send you somewhere else.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15" /></svg>
+        <h3>Fullscreen that fits</h3>
+        <p>Landscape on phones, remote-friendly on TVs.</p>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.8 16a5 5 0 0 1 6.4 0" /><circle cx="12" cy="19.2" r="1" /></svg>
+        <h3>Clear messages</h3>
+        <p>You're told when the internet drops, and it reconnects by itself.</p>
+      </li>
+    </ul>
   </section>
 
   <section class="glance" id="about">
