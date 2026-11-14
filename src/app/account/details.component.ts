@@ -120,7 +120,7 @@ export class DetailsComponent implements OnInit {
     this.errors.set({});
     try {
       const me = await this.api.updateMe(this.form);
-      this.auth.me.set(me);
+      this.auth.setMe(me);
       this.form.phone_number = me.phone_number ? phone(me.phone_number) : '';
       this.saved.set(true);
     } catch (e) {

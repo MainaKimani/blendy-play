@@ -7,6 +7,7 @@ export interface Me {
   has_cinejoy_account: boolean;
   cinejoy_last4: string;
   is_admin: boolean;
+  email_verified: boolean;
   created_at: string;
 }
 

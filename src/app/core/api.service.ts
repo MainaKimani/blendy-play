@@ -32,6 +32,11 @@ export class ApiService {
   plans = () => this.get<Plan[]>('/plans');
   releases = () => firstValueFrom(this.http.get<Release>('/downloads/releases.json'));
 
+  // Email verification after registering
+  verifyEmail = (code: string) => firstValueFrom(this.http.post<Me>(this.url('/auth/verify-email'), { code }));
+  resendCode = () =>
+    firstValueFrom(this.http.post<{ detail: string; retry_after: number }>(this.url('/auth/verify-email/resend'), {}));
+
   // The signed-in customer
   mySubscription = () => this.get<MySubscription>('/me/subscription');
   myPayments = (page = 1) => this.get<Page<MyPayment>>('/payments/mine', { page });

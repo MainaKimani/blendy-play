@@ -67,7 +67,7 @@ export class SigninComponent {
 
   constructor() {
     // Already signed in: go straight to the right place.
-    this.auth.ensureMe().then((me) => me && this.land(me.is_admin));
+    this.auth.ensureMe().then((me) => me && this.land(me.is_admin, me.email_verified));
   }
 
   async submit(): Promise<void> {
@@ -79,7 +79,7 @@ export class SigninComponent {
     this.error.set('');
     try {
       const me = await this.auth.signIn(this.email.trim(), this.password);
-      this.land(me.is_admin);
+      this.land(me.is_admin, me.email_verified);
     } catch (err) {
       this.error.set(errorMessage(err, "Couldn't sign you in. Try again."));
     } finally {
@@ -87,7 +87,11 @@ export class SigninComponent {
     }
   }
 
-  private land(isAdmin: boolean): void {
+  private land(isAdmin: boolean, verified: boolean): void {
+    if (!verified) {
+      this.router.navigateByUrl('/verify');
+      return;
+    }
     const next = this.next();
     const allowed = next && next.startsWith('/') && !next.startsWith('//') && (isAdmin || !next.startsWith('/dashboard'));
     this.router.navigateByUrl(allowed ? next : isAdmin ? '/dashboard' : '/account');

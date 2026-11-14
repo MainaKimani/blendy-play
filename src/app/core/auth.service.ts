@@ -108,6 +108,12 @@ export class AuthService {
     this.router.navigateByUrl(to);
   }
 
+  /** Replace the signed-in account, e.g. after verifying or editing it. */
+  setMe(me: Me): void {
+    this.me.set(me);
+    this.loaded = Promise.resolve(me);
+  }
+
   /** Forget the session without navigating (after deleting the account). */
   clear(): void {
     this.setTokens(null, null);

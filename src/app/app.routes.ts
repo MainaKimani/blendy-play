@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, signedInGuard } from './core/guards';
+import { adminGuard, signedInGuard, unverifiedGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./site/home.component').then((m) => m.HomeComponent) },
@@ -13,6 +13,12 @@ export const routes: Routes = [
     title: 'Admin sign-in · Blendy Play',
     data: { admin: true },
     loadComponent: () => import('./auth/signin.component').then((m) => m.SigninComponent),
+  },
+  {
+    path: 'verify',
+    title: 'Confirm your email · Blendy Play',
+    canActivate: [unverifiedGuard],
+    loadComponent: () => import('./auth/verify.component').then((m) => m.VerifyComponent),
   },
   {
     path: 'account',
