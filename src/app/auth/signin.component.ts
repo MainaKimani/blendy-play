@@ -39,6 +39,7 @@ import { errorMessage } from '../core/errors';
           <p class="form-err" role="alert">{{ error() }}</p>
         }
         <button class="btn" type="submit" [disabled]="busy()">{{ busy() ? 'Signing in…' : 'Sign in' }}</button>
+        <a class="forgot" routerLink="/forgot-password" [queryParams]="email.trim() ? { email: email.trim() } : {}">Forgot your password?</a>
         <p class="note">No account yet? Create one in the Blendy Play app, then sign in here.</p>
       </form>
     </main>
@@ -52,6 +53,8 @@ import { errorMessage } from '../core/errors';
     .sub { color: var(--muted); font-size: 14px; text-align: center; }
     .btn { width: 100%; margin-top: 4px; }
     .note { color: var(--muted); font-size: 13px; text-align: center; }
+    .forgot { justify-self: center; font-size: 14px; color: var(--cyan); text-decoration: none; }
+    .forgot:hover { text-decoration: underline; }
   `,
 })
 export class SigninComponent {

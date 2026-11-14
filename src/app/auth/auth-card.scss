@@ -1,0 +1,13 @@
+/* Shared by the small sign-in style pages (forgot / reset password). */
+.wrap { min-height: 100dvh; display: grid; place-content: center; justify-items: center; gap: 22px; padding: 32px 16px; }
+.brand { display: grid; justify-items: center; gap: 10px; text-decoration: none; font-size: 22px; font-weight: 700; }
+.brand img { filter: drop-shadow(0 0 22px rgba(224, 64, 251, 0.45)); }
+.card { width: min(420px, calc(100vw - 32px)); padding: 28px 24px; display: grid; gap: 16px; }
+h1 { font-size: 22px; text-align: center; }
+.sub { color: var(--muted); font-size: 14px; text-align: center; }
+.sub strong { color: var(--text); }
+.btn { width: 100%; }
+.hint { color: var(--muted); font-size: 12px; }
+.back { justify-self: center; font-size: 14px; color: var(--cyan); text-decoration: none; }
+.back:hover { text-decoration: underline; }
+.done { text-align: center; color: var(--ok); font-size: 14px; }

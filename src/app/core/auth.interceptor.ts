@@ -4,7 +4,10 @@ import { catchError, from, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ConfigService } from './config.service';
 
-const NO_AUTH = ['/auth/login', '/auth/refresh', '/plans'];
+const NO_AUTH = [
+  '/auth/login', '/auth/refresh', '/plans',
+  '/auth/password-reset', '/auth/password-reset/check', '/auth/password-reset/confirm',
+];
 
 /** Adds the bearer token to backend calls and retries once after a refresh. */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

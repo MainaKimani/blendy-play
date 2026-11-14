@@ -32,6 +32,16 @@ export class ApiService {
   plans = () => this.get<Plan[]>('/plans');
   releases = () => firstValueFrom(this.http.get<Release>('/downloads/releases.json'));
 
+  // Forgot password (no sign-in needed)
+  requestReset = (email: string) =>
+    firstValueFrom(this.http.post<{ detail: string }>(this.url('/auth/password-reset'), { email }));
+  checkReset = (token: string) =>
+    firstValueFrom(this.http.post<{ email: string }>(this.url('/auth/password-reset/check'), { token }));
+  confirmReset = (token: string, new_password: string) =>
+    firstValueFrom(
+      this.http.post<{ detail: string }>(this.url('/auth/password-reset/confirm'), { token, new_password }),
+    );
+
   // Email verification after registering
   verifyEmail = (code: string) => firstValueFrom(this.http.post<Me>(this.url('/auth/verify-email'), { code }));
   resendCode = () =>

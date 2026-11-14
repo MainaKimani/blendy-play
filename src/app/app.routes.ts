@@ -15,6 +15,16 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/signin.component').then((m) => m.SigninComponent),
   },
   {
+    path: 'forgot-password',
+    title: 'Reset your password · Blendy Play',
+    loadComponent: () => import('./auth/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+  },
+  {
+    path: 'reset-password',
+    title: 'Choose a new password · Blendy Play',
+    loadComponent: () => import('./auth/reset-password.component').then((m) => m.ResetPasswordComponent),
+  },
+  {
     path: 'verify',
     title: 'Confirm your email · Blendy Play',
     canActivate: [unverifiedGuard],

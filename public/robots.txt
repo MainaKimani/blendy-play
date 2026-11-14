@@ -3,3 +3,6 @@ Disallow: /admin
 Disallow: /signin
 Disallow: /account
 Disallow: /dashboard
+Disallow: /verify
+Disallow: /forgot-password
+Disallow: /reset-password
