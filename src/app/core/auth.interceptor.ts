@@ -13,7 +13,9 @@ const NO_AUTH = [
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const config = inject(ConfigService);
-  if (!req.url.startsWith(config.apiBase) || NO_AUTH.some((p) => req.url.endsWith(p))) {
+  // Exact paths: "/dashboard/plans" needs the token although it ends like "/plans".
+  const path = req.url.slice(config.apiBase.length).split('?')[0];
+  if (!req.url.startsWith(config.apiBase) || NO_AUTH.includes(path)) {
     return next(req);
   }
   const withToken = (r: HttpRequest<unknown>) =>
