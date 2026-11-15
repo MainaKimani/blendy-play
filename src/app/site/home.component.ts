@@ -10,8 +10,8 @@ import { day, money } from '../core/format';
 
 /** Shown until (or if) the backend's live plans load. */
 const FALLBACK_PLANS: Plan[] = [
-  { code: 'weekly', name: 'Weekly', interval: 'WEEK', currency: 'KES', price: '99.00', duration_days: 7 },
-  { code: 'monthly', name: 'Monthly', interval: 'MONTH', currency: 'KES', price: '299.00', duration_days: 30 },
+  { code: 'weekly', name: 'Weekly', interval: 'WEEK', currency: 'KES', price: '119.00', duration_days: 7 },
+  { code: 'monthly', name: 'Monthly', interval: 'MONTH', currency: 'KES', price: '359.00', duration_days: 30 },
 ];
 
 @Component({
