@@ -4,7 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigService } from './config.service';
 import {
   AdminPayment, AdminPlan, AdminPlanChanges, AdminSubscription, AdminSubscriptionChanges, AdminUser,
-  AdminUserChanges, Me, MyDevices, MyPayment, MySubscription, Overview, Page, Plan, Release,
+  AdminUserChanges, Me, MyDevices, MyPayment, MySubscription, Overview, Page, Plan, Release, StaffChanges, StaffMember,
+  StaffRole,
 } from './models';
 
 type Query = Record<string, string | number | undefined>;
@@ -70,6 +71,12 @@ export class ApiService {
     firstValueFrom(this.http.patch<AdminUser>(this.url(`/dashboard/users/${id}/subscription`), body));
   signOutUserDevice = (id: string, deviceId: string) =>
     firstValueFrom(this.http.delete<AdminUser>(this.url(`/dashboard/users/${id}/devices/${deviceId}`)));
+  staff = () => this.get<StaffMember[]>('/dashboard/staff');
+  addStaff = (body: { email: string; first_name: string; last_name: string; role: StaffRole }) =>
+    firstValueFrom(this.http.post<{ invited: boolean; staff: StaffMember[] }>(this.url('/dashboard/staff'), body));
+  updateStaff = (id: string, body: StaffChanges) =>
+    firstValueFrom(this.http.patch<StaffMember[]>(this.url(`/dashboard/staff/${id}`), body));
+  removeStaff = (id: string) => firstValueFrom(this.http.delete<StaffMember[]>(this.url(`/dashboard/staff/${id}`)));
   adminPlans = () => this.get<AdminPlan[]>('/dashboard/plans');
   createPlan = (body: AdminPlanChanges) => firstValueFrom(this.http.post<AdminPlan>(this.url('/dashboard/plans'), body));
   updatePlan = (id: string, body: AdminPlanChanges) =>

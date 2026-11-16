@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '../core/auth.service';
@@ -14,7 +14,7 @@ import { AuthService } from '../core/auth.service';
           <span><span class="neon-text">Blendy Play</span><small>Studio</small></span>
         </a>
         <nav aria-label="Dashboard">
-          @for (item of nav; track item.path) {
+          @for (item of nav(); track item.path) {
             <a [routerLink]="item.path" routerLinkActive="on">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="item.icon" /></svg>
               {{ item.label }}
@@ -75,13 +75,18 @@ import { AuthService } from '../core/auth.service';
 export class DashboardShellComponent {
   auth = inject(AuthService);
   menuOpen = signal(false);
-  nav = [
+  private items = [
     { path: 'overview', label: 'Overview', icon: 'M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-4H4zM14 4v4h6V4z' },
     { path: 'users', label: 'Users', icon: 'M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M21 19v-1a4 4 0 0 0-3-3.9M16 3.1a3.5 3.5 0 0 1 0 6.8' },
     { path: 'payments', label: 'Payments', icon: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5zM3 10h18M7 15h3' },
     { path: 'plans', label: 'Plans', icon: 'M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM7.5 7.5h.01' },
     { path: 'subscriptions', label: 'Subscriptions', icon: 'M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4' },
   ];
+  private staffItem = {
+    path: 'staff', label: 'Staff', icon: 'M12 3 4 6v6c0 4.4 3.4 8.3 8 9 4.6-.7 8-4.6 8-9V6zM9 12l2 2 4-4',
+  };
+  /** Only a super-admin manages staff. */
+  nav = computed(() => (this.auth.isSuperAdmin() ? [...this.items, this.staffItem] : this.items));
 
   constructor() {
     inject(Router).events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.menuOpen.set(false));

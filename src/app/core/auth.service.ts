@@ -41,6 +41,8 @@ export class AuthService {
 
   readonly me = signal<Me | null>(null);
   readonly isAdmin = computed(() => !!this.me()?.is_admin);
+  /** Staff only view the dashboard; a super-admin can change things. */
+  readonly isSuperAdmin = computed(() => !!this.me()?.is_superadmin);
   private access = read(ACCESS);
   private refresh = read(REFRESH);
   private refreshing: Promise<boolean> | null = null;

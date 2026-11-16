@@ -2,6 +2,7 @@ import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { errorMessage, fieldErrors } from '../core/errors';
 import { ago, day, dayTime, money, phone } from '../core/format';
 import { AdminPlan, AdminSubscriptionChanges, AdminUser, Device, SubStatus } from '../core/models';
@@ -41,6 +42,8 @@ function dateInput(iso: string | null): string {
 
       @if (u.is_deleted) {
         <p class="panel note">This customer deleted their account. Their details were erased, so there's nothing to edit.</p>
+      } @else if (!auth.isSuperAdmin()) {
+        <p class="panel note">You can view this customer. Only a super-admin can change their details or subscription.</p>
       } @else {
         <div class="editors">
           <form class="panel block" (ngSubmit)="saveDetails()" novalidate>
@@ -155,9 +158,11 @@ function dateInput(iso: string | null): string {
                   <td>{{ ago(d.last_seen_at) }}</td>
                   <td>{{ dayTime(d.signed_in_at) }}</td>
                   <td>
-                    <button class="btn ghost small" type="button" [disabled]="deviceBusy() === d.id" (click)="signOutDevice(u, d)">
-                      {{ deviceBusy() === d.id ? 'Signing out…' : 'Sign out' }}
-                    </button>
+                    @if (auth.isSuperAdmin()) {
+                      <button class="btn ghost small" type="button" [disabled]="deviceBusy() === d.id" (click)="signOutDevice(u, d)">
+                        {{ deviceBusy() === d.id ? 'Signing out…' : 'Sign out' }}
+                      </button>
+                    }
                   </td>
                 </tr>
               }
@@ -232,6 +237,7 @@ function dateInput(iso: string | null): string {
 })
 export class UserDetailComponent implements OnInit {
   private api = inject(ApiService);
+  auth = inject(AuthService);
   id = input.required<string>();
   user = signal<AdminUser | null>(null);
   plans = signal<AdminPlan[]>([]);

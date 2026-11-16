@@ -6,7 +6,10 @@ export interface Me {
   phone_number: string;
   has_cinejoy_account: boolean;
   cinejoy_last4: string;
+  /** Staff or super-admin: can open the dashboard. */
   is_admin: boolean;
+  /** Super-admin: can change things in the dashboard, staff included. */
+  is_superadmin: boolean;
   email_verified: boolean;
   created_at: string;
 }
@@ -206,3 +209,22 @@ export interface MyDevices {
   apps_signed_in: number;
   devices: Device[];
 }
+
+export type StaffRole = 'staff' | 'superadmin';
+
+export interface StaffMember {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  name: string;
+  role: StaffRole;
+  is_active: boolean;
+  /** False until an invited member chooses their password. */
+  has_password: boolean;
+  last_active_at: string | null;
+  created_at: string;
+  is_you: boolean;
+}
+
+export type StaffChanges = Partial<Pick<StaffMember, 'first_name' | 'last_name' | 'role' | 'is_active'>>;

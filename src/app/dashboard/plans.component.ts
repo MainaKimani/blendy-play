@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { errorMessage, fieldErrors } from '../core/errors';
 import { money } from '../core/format';
 import { AdminPlan, AdminPlanChanges } from '../core/models';
@@ -23,7 +24,7 @@ function slug(name: string): string {
         <h1>Plans</h1>
         <p>What customers can buy in the app. Price changes apply to new payments only.</p>
       </div>
-      @if (!editing()) {
+      @if (!editing() && auth.isSuperAdmin()) {
         <button class="btn" type="button" (click)="startNew()">New plan</button>
       }
     </div>
@@ -102,10 +103,12 @@ function slug(name: string): string {
                   <td class="num">{{ p.active_subscribers }}</td>
                   <td class="num">{{ money(p.revenue, p.currency) }}</td>
                   <td class="actions">
-                    <button class="btn ghost small" type="button" (click)="startEdit(p)">Edit</button>
-                    <button class="btn ghost small" type="button" (click)="toggle(p)">{{ p.is_active ? 'Hide' : 'Show' }}</button>
-                    @if (!p.payments_count && !p.active_subscribers) {
-                      <button class="btn danger small" type="button" (click)="remove(p)">Delete</button>
+                    @if (auth.isSuperAdmin()) {
+                      <button class="btn ghost small" type="button" (click)="startEdit(p)">Edit</button>
+                      <button class="btn ghost small" type="button" (click)="toggle(p)">{{ p.is_active ? 'Hide' : 'Show' }}</button>
+                      @if (!p.payments_count && !p.active_subscribers) {
+                        <button class="btn danger small" type="button" (click)="remove(p)">Delete</button>
+                      }
                     }
                   </td>
                 </tr>
@@ -141,6 +144,7 @@ function slug(name: string): string {
 })
 export class PlansComponent implements OnInit {
   private api = inject(ApiService);
+  auth = inject(AuthService);
   plans = signal<AdminPlan[] | null>(null);
   error = signal('');
   notice = signal('');
