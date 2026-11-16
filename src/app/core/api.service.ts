@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigService } from './config.service';
 import {
   AdminPayment, AdminPlan, AdminPlanChanges, AdminSubscription, AdminSubscriptionChanges, AdminUser,
-  AdminUserChanges, Me, MyPayment, MySubscription, Overview, Page, Plan, Release,
+  AdminUserChanges, Me, MyDevices, MyPayment, MySubscription, Overview, Page, Plan, Release,
 } from './models';
 
 type Query = Record<string, string | number | undefined>;
@@ -57,6 +57,8 @@ export class ApiService {
     firstValueFrom(this.http.post<void>(this.url('/auth/me/password'), { current_password, new_password }));
   deleteAccount = (password: string) =>
     firstValueFrom(this.http.request<void>('DELETE', this.url('/auth/me'), { body: { password } }));
+  myDevices = () => this.get<MyDevices>('/auth/me/devices');
+  signOutDevice = (id: string) => firstValueFrom(this.http.delete<void>(this.url(`/auth/me/devices/${id}`)));
 
   // The admin dashboard
   overview = (days: number) => this.get<Overview>('/dashboard/overview', { days });
@@ -66,6 +68,8 @@ export class ApiService {
     firstValueFrom(this.http.patch<AdminUser>(this.url(`/dashboard/users/${id}`), body));
   updateSubscription = (id: string, body: AdminSubscriptionChanges) =>
     firstValueFrom(this.http.patch<AdminUser>(this.url(`/dashboard/users/${id}/subscription`), body));
+  signOutUserDevice = (id: string, deviceId: string) =>
+    firstValueFrom(this.http.delete<AdminUser>(this.url(`/dashboard/users/${id}/devices/${deviceId}`)));
   adminPlans = () => this.get<AdminPlan[]>('/dashboard/plans');
   createPlan = (body: AdminPlanChanges) => firstValueFrom(this.http.post<AdminPlan>(this.url('/dashboard/plans'), body));
   updatePlan = (id: string, body: AdminPlanChanges) =>

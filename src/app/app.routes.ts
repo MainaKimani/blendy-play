@@ -35,6 +35,8 @@ export const routes: Routes = [
     canActivate: [signedInGuard],
     loadChildren: () => import('./account/account.routes').then((m) => m.ACCOUNT_ROUTES),
   },
+  // The apps' "too many devices" message links here.
+  { path: 'devices', redirectTo: 'account/devices' },
   {
     path: 'dashboard',
     canActivate: [adminGuard],

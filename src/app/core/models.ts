@@ -103,6 +103,8 @@ export interface AdminUser {
   payments_count: number | null;
   total_paid: string;
   payments?: AdminPayment[];
+  /** Devices signed in now (on the customer's detail only). */
+  devices?: Device[];
 }
 
 export type AdminUserChanges = Partial<
@@ -183,3 +185,24 @@ export interface ReleaseFile {
 }
 
 export type ReleasePlatform = keyof Release['platforms'];
+
+/** A signed-in device: an app install, or a browser on this site. */
+export interface Device {
+  id: string;
+  kind: 'app' | 'portal';
+  /** android, windows, linux or web. */
+  platform: string;
+  name: string;
+  app_version: string;
+  signed_in_at: string;
+  last_seen_at: string;
+  /** The device making this request. */
+  current: boolean;
+}
+
+export interface MyDevices {
+  /** How many apps may be signed in at once; null for no limit. */
+  limit: number | null;
+  apps_signed_in: number;
+  devices: Device[];
+}

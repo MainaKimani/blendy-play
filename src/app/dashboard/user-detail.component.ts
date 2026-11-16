@@ -3,8 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { errorMessage, fieldErrors } from '../core/errors';
-import { day, dayTime, money, phone } from '../core/format';
-import { AdminPlan, AdminSubscriptionChanges, AdminUser, SubStatus } from '../core/models';
+import { ago, day, dayTime, money, phone } from '../core/format';
+import { AdminPlan, AdminSubscriptionChanges, AdminUser, Device, SubStatus } from '../core/models';
+import { deviceKind } from '../account/devices.component';
 import { paymentPill, subscriptionPill } from '../shared/status';
 
 const NAIROBI = 'Africa/Nairobi';
@@ -138,6 +139,36 @@ function dateInput(iso: string | null): string {
         </div>
       }
 
+      <h2>Devices</h2>
+      <div class="dt-wrap devices">
+        @if (u.devices?.length) {
+          <table class="dt">
+            <thead>
+              <tr><th scope="col">Device</th><th scope="col">App</th><th scope="col">Last active</th>
+                <th scope="col">Signed in</th><th scope="col"><span class="visually-hidden">Sign out</span></th></tr>
+            </thead>
+            <tbody>
+              @for (d of u.devices; track d.id) {
+                <tr>
+                  <td class="wrap">{{ d.name || '—' }}</td>
+                  <td>{{ kind(d) }}</td>
+                  <td>{{ ago(d.last_seen_at) }}</td>
+                  <td>{{ dayTime(d.signed_in_at) }}</td>
+                  <td>
+                    <button class="btn ghost small" type="button" [disabled]="deviceBusy() === d.id" (click)="signOutDevice(u, d)">
+                      {{ deviceBusy() === d.id ? 'Signing out…' : 'Sign out' }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty">No devices are signed in.</p>
+        }
+        @if (deviceErr()) { <p class="form-err" role="alert">{{ deviceErr() }}</p> }
+      </div>
+
       <h2>Payments</h2>
       <div class="dt-wrap">
         @if (u.payments?.length) {
@@ -194,6 +225,7 @@ function dateInput(iso: string | null): string {
     .add-days .field { width: 120px; }
     .lifetime { display: grid; gap: 6px; justify-items: start; padding-top: 14px; border-top: 1px solid var(--line); }
     select.input { appearance: auto; }
+    .devices { margin-bottom: 28px; }
     @media (max-width: 1100px) { .editors { grid-template-columns: 1fr; } }
     @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
   `,
@@ -227,6 +259,23 @@ export class UserDetailComponent implements OnInit {
   money = money;
   day = day;
   dayTime = dayTime;
+  ago = ago;
+  kind = deviceKind;
+  deviceBusy = signal<string | null>(null);
+  deviceErr = signal('');
+
+  /** Sign one of the customer's devices out; the answer is the refreshed customer. */
+  async signOutDevice(u: AdminUser, d: Device): Promise<void> {
+    this.deviceBusy.set(d.id);
+    this.deviceErr.set('');
+    try {
+      this.user.set(await this.api.signOutUserDevice(u.id, d.id));
+    } catch (e) {
+      this.deviceErr.set(errorMessage(e));
+    } finally {
+      this.deviceBusy.set(null);
+    }
+  }
   phone = phone;
   payPill = paymentPill;
 

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -33,6 +33,9 @@ function write(key: string, value: string | null): void {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
+  // Bypasses the interceptor: signing out must not trigger a refresh and
+  // another sign-out if the token was already refused.
+  private bare = new HttpClient(inject(HttpBackend));
   private config = inject(ConfigService);
   private router = inject(Router);
 
@@ -102,6 +105,7 @@ export class AuthService {
   }
 
   signOut(to = '/signin'): void {
+    this.endSession();
     this.setTokens(null, null);
     this.me.set(null);
     this.loaded = null;
@@ -119,6 +123,14 @@ export class AuthService {
     this.setTokens(null, null);
     this.me.set(null);
     this.loaded = null;
+  }
+
+  /** Tell the backend this browser is signed out, so it leaves the devices list. */
+  private endSession(): void {
+    if (!this.access) return;
+    this.bare
+      .post(`${this.config.apiBase}/auth/logout`, {}, { headers: { Authorization: `Bearer ${this.access}` } })
+      .subscribe({ error: () => undefined });
   }
 
   private setTokens(access: string | null, refresh: string | null): void {
