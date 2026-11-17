@@ -96,8 +96,14 @@ h1 {
   border: 0; background: none; color: var(--muted); font: 15px var(--font); padding: 9px 18px; border-radius: 9px; cursor: pointer;
 }
 .device-tabs button.on { color: var(--text); background: var(--card-2); box-shadow: inset 0 -2px 0 var(--magenta); }
-.phones { display: grid; grid-template-columns: repeat(3, minmax(0, 260px)); justify-content: center; gap: 28px; margin-top: 32px; }
-.phone-frame { margin: 0; display: flex; flex-direction: column; align-items: center; }
+/* Phone screenshots: one row, scrolled sideways (swipe, trackpad or the scrollbar), snapping to
+   each screen. */
+.phones {
+  display: flex; gap: 28px; margin-top: 32px; padding: 4px 4px 16px; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: 4px; text-align: left;
+  scrollbar-color: rgba(224, 64, 251, 0.5) transparent;
+}
+.phone-frame { margin: 0; display: flex; flex-direction: column; align-items: center; flex: 0 0 240px; scroll-snap-align: start; }
 .phone-frame img {
   width: 100%; height: auto; border-radius: 30px; border: 8px solid #17171f;
   box-shadow: 0 0 0 1px var(--line), 0 24px 60px -20px rgba(224, 64, 251, 0.35);
@@ -174,8 +180,6 @@ h1 {
       radial-gradient(80% 50% at 0% 100%, rgba(224, 64, 251, 0.22), transparent 70%);
   }
   .facts { grid-template-columns: 1fr 1fr; }
-  .phones { grid-template-columns: repeat(3, minmax(220px, 1fr)); justify-content: start; text-align: left; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; }
-  .phone-frame { scroll-snap-align: start; }
 }
 @media (max-width: 640px) {
   .hide-s { display: none; }
@@ -185,6 +189,8 @@ h1 {
   .file { grid-template-columns: 44px 1fr; }
   .file .btn, .file .soon { grid-column: 1 / -1; }
   .os { width: 44px; height: 44px; }
+  .phones { gap: 18px; }
+  .phone-frame { flex-basis: min(68vw, 240px); }
 }
 
 /* Countdown glass over the downloads. The vault holds the real section content; the glass and
@@ -317,3 +323,58 @@ h1 {
 .review-right strong { color: var(--ok); font-weight: 500; }
 .vault.sealed { min-height: 760px; }
 @media (max-width: 640px) { .vault.sealed { min-height: 900px; } }
+
+/* Phones: the countdown card sits in the middle of the glass, with an even border of glass
+   showing all round it. The card and the locked downloads share one grid cell, so the cell is as
+   tall as the card plus its margin; the quiz and the review after a miss grow the pane evenly.
+   (On wider screens the glass bleeds 16px past the section and the section has a fixed height;
+   on a phone that ran over the heading and the screen edges and left a long empty pane.)
+   Nothing shows through the glass on a phone, even when the downloads are listed: blurred to
+   phone width they read as smears, not as a teaser. They're hidden while the glass is up and
+   appear as normal once it breaks.
+   The pane itself is lighter than on desktop and see-through, with a bright edge, a highlight
+   along the top and two diagonal streaks of light, so it reads as glass rather than a dark
+   panel. The streaks fade with the rest when it breaks. */
+@media (max-width: 640px) {
+  .vault.sealed { min-height: 0; display: grid; margin-top: 28px; }
+  .vault.sealed > .vault-body, .vault.sealed > .countdown { grid-area: 1 / 1; }
+  .vault.sealed .vault-body { height: 0; min-height: 100%; overflow: hidden; visibility: hidden; }
+  .vault.sealed .glass { inset: 0; border-radius: 26px; }
+  .vault.sealed .shard {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 30%),
+      linear-gradient(135deg, rgba(190, 225, 255, 0.10), rgba(255, 255, 255, 0.03) 45%, rgba(224, 64, 251, 0.07)),
+      rgba(16, 18, 28, 0.28);
+    backdrop-filter: blur(9px) saturate(1.25) brightness(1.05);
+    -webkit-backdrop-filter: blur(9px) saturate(1.25) brightness(1.05);
+  }
+  .vault.sealed .glass::before {
+    content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; pointer-events: none;
+    background:
+      linear-gradient(118deg, transparent 18%, rgba(255, 255, 255, 0.13) 22%, rgba(255, 255, 255, 0.04) 27%, transparent 31%),
+      linear-gradient(118deg, transparent 58%, rgba(255, 255, 255, 0.07) 61%, transparent 64%);
+  }
+  .vault.sealed .glass::after {
+    border-color: rgba(255, 255, 255, 0.30);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 1px 0 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 24px 70px -30px rgba(224, 64, 251, 0.55),
+      0 0 0 1px rgba(0, 0, 0, 0.4);
+  }
+  .glass.breaking::before { animation: fade 0.3s 0.3s both; }
+  .countdown {
+    position: relative; top: auto; left: auto; transform: none; width: auto; align-self: center;
+    margin: 40px 22px; padding: 26px 18px 22px; background: rgba(12, 12, 18, 0.72);
+  }
+  .countdown-lead { font-size: 15px; }
+  .digits span { font-size: 44px; }
+  .digits b { font-size: 34px; }
+  .quiz { margin-top: 20px; padding-top: 18px; }
+  @keyframes pop { to { transform: scale(1.06); opacity: 0; filter: blur(6px); } }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+}
