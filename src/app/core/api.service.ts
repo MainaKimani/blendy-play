@@ -6,6 +6,7 @@ import {
   AdminPayment, AdminPlan, AdminPlanChanges, AdminSubscription, AdminSubscriptionChanges, AdminUser,
   AdminUserChanges, Me, MyDevices, MyPayment, MySubscription, Overview, Page, Plan, Release, StaffChanges, StaffMember,
   StaffRole,
+  Terms,
 } from './models';
 
 type Query = Record<string, string | number | undefined>;
@@ -32,6 +33,7 @@ export class ApiService {
 
   // Public
   plans = () => this.get<Plan[]>('/plans');
+  terms = () => this.get<Terms>('/terms');
   releases = () => firstValueFrom(this.http.get<Release>('/downloads/releases.json'));
 
   // Forgot password (no sign-in needed)

@@ -228,3 +228,11 @@ export interface StaffMember {
 }
 
 export type StaffChanges = Partial<Pick<StaffMember, 'first_name' | 'last_name' | 'role' | 'is_active'>>;
+
+/** GET /terms: the live Terms and Conditions. `html` is escaped by the backend. */
+export interface Terms {
+  version: string;
+  /** YYYY-MM-DD */
+  last_updated: string;
+  html: string;
+}

@@ -35,6 +35,11 @@ export const routes: Routes = [
     canActivate: [signedInGuard],
     loadChildren: () => import('./account/account.routes').then((m) => m.ACCOUNT_ROUTES),
   },
+  {
+    path: 'terms',
+    title: 'Terms and Conditions · Blendy Play',
+    loadComponent: () => import('./site/terms.component').then((m) => m.TermsComponent),
+  },
   // The apps' "too many devices" message links here.
   { path: 'devices', redirectTo: 'account/devices' },
   {

@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { ConfigService } from './config.service';
 
 const NO_AUTH = [
-  '/auth/login', '/auth/refresh', '/plans',
+  '/auth/login', '/auth/refresh', '/plans', '/terms',
   '/auth/password-reset', '/auth/password-reset/check', '/auth/password-reset/confirm',
 ];
 
