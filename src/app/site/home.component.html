@@ -204,15 +204,64 @@
           }
         </svg>
       </div>
-      <div class="countdown" [class.breaking]="glass() === 'breaking'" role="timer"
-           [attr.aria-label]="'The glass breaks in ' + countdown().h + ' hours, ' + countdown().m + ' minutes'">
-        <p class="countdown-lead">The glass breaks in</p>
-        <div class="digits" aria-hidden="true">
-          <div><span>{{ countdown().h }}</span><small>hours</small></div>
-          <b>:</b>
-          <div><span>{{ countdown().m }}</span><small>minutes</small></div>
-          <b>:</b>
-          <div><span>{{ countdown().s }}</span><small>seconds</small></div>
+      <div class="countdown" [class.breaking]="glass() === 'breaking'" [class.shake]="shake()" [class.timeout]="timedOut()">
+        <div role="timer" [attr.aria-label]="'The glass breaks in ' + countdown().h + ' hours, ' + countdown().m + ' minutes'">
+          <p class="countdown-lead">The glass breaks in</p>
+          <div class="digits" aria-hidden="true">
+            <div><span>{{ countdown().h }}</span><small>hours</small></div>
+            <b>:</b>
+            <div><span>{{ countdown().m }}</span><small>minutes</small></div>
+            <b>:</b>
+            <div><span>{{ countdown().s }}</span><small>seconds</small></div>
+          </div>
+        </div>
+
+        <div class="quiz">
+          @switch (quizState()) {
+            @case ('idle') {
+              <p class="quiz-pitch">Can't wait? Get three film questions right and the glass breaks for you now.</p>
+              <button type="button" class="btn" (click)="startQuiz()">Break it early</button>
+            }
+            @case ('asking') {
+              @if (quiz()[quizStep()]; as item) {
+                <fieldset class="question">
+                  <legend>
+                    <span class="q-count">
+                      Question {{ quizStep() + 1 }} of 3 · @if (timedOut()) { <em>Time's up</em> } @else { {{ questionLeft() }}s }
+                    </span>
+                    {{ item.q }}
+                  </legend>
+                  <div class="q-time" aria-hidden="true"><i [style.transform]="'scaleX(' + questionFill() + ')'"></i></div>
+                  <div class="choices">
+                    @for (o of item.options; track o) {
+                      <label class="choice" [class.on]="picked() === o">
+                        <input type="radio" name="trivia" [value]="o" [checked]="picked() === o" [disabled]="timedOut()" (change)="picked.set(o)">
+                        <span>{{ o }}</span>
+                      </label>
+                    }
+                  </div>
+                  <button type="button" class="btn" [disabled]="!picked() || timedOut()" (click)="confirmAnswer()">OK</button>
+                </fieldset>
+              }
+            }
+            @case ('missed') {
+              <p class="quiz-miss" role="status">
+                Not quite. The glass holds. You missed {{ review().length }} of 3.
+              </p>
+              <ul class="review">
+                @for (r of review(); track r.q) {
+                  <li>
+                    <p class="review-q">{{ r.q }}</p>
+                    <p class="review-given">
+                      @if (r.given) { You said <s>{{ r.given }}</s> } @else { Time ran out }
+                    </p>
+                    <p class="review-right">Right answer: <strong>{{ r.right }}</strong></p>
+                  </li>
+                }
+              </ul>
+              <p class="quiz-pitch">Try again in {{ retryLeft() }}s.</p>
+            }
+          }
         </div>
       </div>
     }

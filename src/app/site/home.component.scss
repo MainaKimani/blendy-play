@@ -252,3 +252,68 @@ h1 {
   .countdown { top: 140px; transform: translate(-50%, 0); }
   @keyframes pop { to { transform: translate(-50%, 0) scale(1.12); opacity: 0; filter: blur(6px); } }
 }
+
+/* Early-break trivia inside the countdown card. */
+.vault.sealed { min-height: 640px; }
+.quiz { margin-top: 24px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: grid; justify-items: center; gap: 14px; }
+.quiz-pitch { color: #c9c9d3; font-size: 15px; max-width: 36ch; }
+.quiz-miss { color: var(--bad); font-weight: 500; }
+.question { border: 0; margin: 0; padding: 0; width: 100%; display: grid; gap: 14px; justify-items: center; }
+.question legend { padding: 0; font-size: 17px; font-weight: 500; line-height: 1.35; }
+.q-count { display: block; margin-bottom: 6px; color: var(--muted); font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.12em; font-variant-numeric: tabular-nums; }
+.q-time { width: 100%; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.q-time i { display: block; height: 100%; background: var(--neon); transform-origin: left; transition: transform 0.25s linear; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.choice {
+  display: flex; align-items: center; min-height: 44px; padding: 8px 12px; border-radius: 11px; cursor: pointer; text-align: left;
+  border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03); font-size: 14px; line-height: 1.3;
+}
+.choice:hover { border-color: rgba(224, 64, 251, 0.5); }
+.choice.on { border-color: var(--magenta); background: rgba(224, 64, 251, 0.12); }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice:has(input:focus-visible) { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.question .btn { min-width: 120px; }
+
+.countdown.shake { animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+@keyframes shake {
+  10%, 90% { transform: translate(calc(-50% - 2px), -50%); }
+  20%, 80% { transform: translate(calc(-50% + 4px), -50%); }
+  30%, 50%, 70% { transform: translate(calc(-50% - 8px), -50%); }
+  40%, 60% { transform: translate(calc(-50% + 8px), -50%); }
+}
+@media (max-width: 640px) {
+  .vault.sealed { min-height: 760px; }
+  .countdown { top: 24px; }
+  .choices { grid-template-columns: 1fr; }
+  @keyframes shake {
+    10%, 90% { transform: translate(calc(-50% - 2px), 0); }
+    20%, 80% { transform: translate(calc(-50% + 4px), 0); }
+    30%, 50%, 70% { transform: translate(calc(-50% - 8px), 0); }
+    40%, 60% { transform: translate(calc(-50% + 8px), 0); }
+  }
+}
+@media (prefers-reduced-motion: reduce) { .countdown.shake { animation: none; } }
+
+/* A card that ran out of time glows red until the next one appears. */
+.countdown { transition: border-color 0.2s, box-shadow 0.2s; }
+.countdown.timeout {
+  border-color: rgba(255, 61, 87, 0.85);
+  box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.6), 0 0 28px 2px rgba(255, 61, 87, 0.55), 0 0 90px -10px rgba(255, 61, 87, 0.45),
+    0 40px 100px -30px rgba(0, 0, 0, 0.9);
+  animation: danger-pulse 0.75s ease-in-out 2;
+}
+.countdown.timeout .q-count em { color: var(--bad); font-style: normal; font-weight: 500; }
+.countdown.timeout .choice { opacity: 0.5; cursor: default; }
+@keyframes danger-pulse { 50% { box-shadow: 0 0 0 1px rgba(255, 61, 87, 0.9), 0 0 44px 6px rgba(255, 61, 87, 0.7), 0 0 120px -10px rgba(255, 61, 87, 0.55); } }
+@media (prefers-reduced-motion: reduce) { .countdown.timeout { animation: none; } }
+
+/* After a miss: what was wrong and what was right. */
+.review { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; gap: 8px; text-align: left; }
+.review li { padding: 10px 12px; border-radius: 11px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03); font-size: 14px; }
+.review-q { color: var(--text); font-weight: 500; }
+.review-given { color: var(--bad); margin-top: 4px; }
+.review-given s { color: #c9c9d3; text-decoration-color: var(--bad); }
+.review-right { color: var(--muted); margin-top: 2px; }
+.review-right strong { color: var(--ok); font-weight: 500; }
+.vault.sealed { min-height: 760px; }
+@media (max-width: 640px) { .vault.sealed { min-height: 900px; } }
