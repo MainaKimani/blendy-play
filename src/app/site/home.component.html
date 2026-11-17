@@ -139,6 +139,10 @@
 
   <section class="download" id="download">
     <h2>Get Blendy Play.</h2>
+    <!-- Until the launch moment the downloads sit under frosted glass with a countdown on top.
+         At zero the glass shatters and the section works as normal. -->
+    <div class="vault" [class.sealed]="glass() !== 'gone'">
+    <div class="vault-body" [inert]="glass() !== 'gone'">
     @if (release(); as r) {
       <p class="section-lede">Version {{ r.version }}, released {{ day(r.date) }}.</p>
       <div class="files">
@@ -186,6 +190,32 @@
         <li><strong>Choose a plan</strong> and approve the M-Pesa prompt on your phone.</li>
         <li><strong>Press play.</strong> Your account works on all your screens.</li>
       </ol>
+    </div>
+    </div>
+    @if (glass() !== 'gone') {
+      <div class="glass" [class.breaking]="glass() === 'breaking'" aria-hidden="true">
+        @for (s of shards; track $index) {
+          <span class="shard" [style.clip-path]="s.clip" [style.--dx]="s.dx" [style.--dy]="s.dy"
+                [style.--rot]="s.rot" [style.--delay]="s.delay"></span>
+        }
+        <svg class="cracks" viewBox="0 0 100 100" preserveAspectRatio="none">
+          @for (s of shards; track $index) {
+            <line x1="50" y1="50" [attr.x2]="s.edgeX" [attr.y2]="s.edgeY" />
+          }
+        </svg>
+      </div>
+      <div class="countdown" [class.breaking]="glass() === 'breaking'" role="timer"
+           [attr.aria-label]="'The glass breaks in ' + countdown().h + ' hours, ' + countdown().m + ' minutes'">
+        <p class="countdown-lead">The glass breaks in</p>
+        <div class="digits" aria-hidden="true">
+          <div><span>{{ countdown().h }}</span><small>hours</small></div>
+          <b>:</b>
+          <div><span>{{ countdown().m }}</span><small>minutes</small></div>
+          <b>:</b>
+          <div><span>{{ countdown().s }}</span><small>seconds</small></div>
+        </div>
+      </div>
+    }
     </div>
   </section>
 

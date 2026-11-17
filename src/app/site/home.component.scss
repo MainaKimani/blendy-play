@@ -186,3 +186,69 @@ h1 {
   .file .btn, .file .soon { grid-column: 1 / -1; }
   .os { width: 44px; height: 44px; }
 }
+
+/* Countdown glass over the downloads. The vault holds the real section content; the glass and
+   the countdown card are laid over it until the launch moment, then shatter away. */
+.vault { position: relative; isolation: isolate; }
+.vault.sealed .vault-body { user-select: none; }
+.vault.sealed { min-height: 420px; }
+.glass { position: absolute; inset: -16px; z-index: 1; border-radius: var(--radius-l); pointer-events: auto; }
+.shard {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.02) 45%, rgba(224, 64, 251, 0.06)),
+    rgba(10, 10, 16, 0.38);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+}
+/* The glass edge and a soft sheen, drawn once over the whole pane. */
+.glass::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 30px 80px -40px rgba(224, 64, 251, 0.5);
+}
+.cracks { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
+.cracks line { stroke: rgba(255, 255, 255, 0.85); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+
+.countdown {
+  position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(100%, 520px); padding: 32px clamp(20px, 5vw, 44px) 30px; text-align: center;
+  border-radius: 24px; background: rgba(13, 13, 18, 0.62); border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(224, 64, 251, 0.12), 0 0 80px -30px rgba(0, 229, 255, 0.35);
+}
+.countdown::before {
+  content: ""; position: absolute; top: -1px; left: 32px; right: 32px; height: 2px; border-radius: 2px; background: var(--neon);
+}
+.countdown-lead { color: #c9c9d3; font-size: 17px; letter-spacing: 0.01em; }
+.digits { display: flex; align-items: flex-start; justify-content: center; gap: clamp(6px, 2vw, 14px); margin-top: 16px; }
+.digits div { display: grid; justify-items: center; gap: 6px; min-width: 2.2ch; }
+.digits span {
+  font-size: clamp(40px, 9vw, 64px); font-weight: 700; line-height: 1; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  background: var(--neon); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.digits small { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; }
+.digits b { font-size: clamp(32px, 7vw, 52px); line-height: 1.1; color: rgba(255, 255, 255, 0.35); font-weight: 500; }
+
+/* The break: cracks flash, then each shard falls out along its own line. */
+.glass.breaking .cracks { animation: crack 1.2s ease-out both; }
+.glass.breaking .shard { animation: shatter 1.2s cubic-bezier(0.5, 0, 0.8, 0.4) both; animation-delay: calc(0.3s + var(--delay)); }
+.glass.breaking::after { animation: fade 0.3s 0.3s both; }
+.countdown.breaking { animation: pop 0.45s 0.15s ease-in both; }
+
+@keyframes crack { 0% { opacity: 0; } 12% { opacity: 1; } 35% { opacity: 0.8; } 100% { opacity: 0; } }
+@keyframes shatter {
+  to { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.7); opacity: 0; }
+}
+@keyframes fade { to { opacity: 0; } }
+@keyframes pop { to { transform: translate(-50%, -50%) scale(1.12); opacity: 0; filter: blur(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .glass.breaking .cracks, .glass.breaking::after { animation: none; }
+  .glass.breaking .shard, .countdown.breaking { animation: fade 0.6s both; }
+}
+@media (max-width: 640px) {
+  .countdown { top: 140px; transform: translate(-50%, 0); }
+  @keyframes pop { to { transform: translate(-50%, 0) scale(1.12); opacity: 0; filter: blur(6px); } }
+}
