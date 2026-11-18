@@ -35,7 +35,7 @@ import { PasswordInputComponent } from '../shared/password-input.component';
     <section class="panel block danger-zone">
       <h2>Delete account</h2>
       <p class="muted">
-        This removes your name, email, phone number and saved CineJoy number, and signs you out everywhere.
+        This removes your name, email, phone number and saved server key, and signs you out everywhere.
         Any time left on your plan is lost. Records of past payments are kept without your details,
         because we're required to keep financial records.
       </p>

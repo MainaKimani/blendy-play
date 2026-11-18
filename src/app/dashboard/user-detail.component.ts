@@ -35,7 +35,7 @@ function dateInput(iso: string | null): string {
         <div><dt>Phone</dt><dd>{{ phone(u.phone_number) }}</dd></div>
         <div><dt>Paid in total</dt><dd>{{ money(u.total_paid) }}</dd></div>
         <div><dt>Payments</dt><dd>{{ u.payments_count ?? 0 }}</dd></div>
-        <div><dt>CineJoy number</dt><dd>{{ u.has_cinejoy_account ? 'Saved' : 'Not saved' }}</dd></div>
+        <div><dt>Server key</dt><dd>{{ u.has_cinejoy_account ? 'Saved' : 'Not saved' }}</dd></div>
         <div><dt>Email</dt><dd>{{ u.email_verified ? 'Confirmed' : 'Not confirmed' }}</dd></div>
         <div><dt>Account</dt><dd>{{ u.is_deleted ? 'Deleted' : u.is_active ? 'Active' : 'Suspended' }}</dd></div>
       </dl>

@@ -36,7 +36,7 @@ import { ListBase } from './list-base';
             <thead>
               <tr>
                 <th scope="col">Customer</th><th scope="col">Phone</th><th scope="col">Subscription</th>
-                <th scope="col">Ends</th><th scope="col" class="num">Paid in total</th><th scope="col">CineJoy</th><th scope="col">Joined</th><th scope="col"><span class="visually-hidden">Actions</span></th>
+                <th scope="col">Ends</th><th scope="col" class="num">Paid in total</th><th scope="col">Server key</th><th scope="col">Joined</th><th scope="col"><span class="visually-hidden">Actions</span></th>
               </tr>
             </thead>
             <tbody>

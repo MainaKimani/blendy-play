@@ -72,12 +72,12 @@ import { subscriptionPill } from '../shared/status';
     </form>
 
     <section class="panel block">
-      <h2>CineJoy</h2>
+      <h2>Third-party server key</h2>
       <p class="muted">
         @if (auth.me()?.has_cinejoy_account) {
-          Your CineJoy number ending in {{ auth.me()?.cinejoy_last4 }} is saved in the app.
+          Your key ending in {{ auth.me()?.cinejoy_last4 }} is saved. Every device you sign in on uses it.
         } @else {
-          No CineJoy number saved. It's optional: in the app, choose "Save my CineJoy number" to keep it safe.
+          No key saved. It's optional: in the app, choose "Generate Server Key" to create one and keep it safe.
         }
       </p>
     </section>
