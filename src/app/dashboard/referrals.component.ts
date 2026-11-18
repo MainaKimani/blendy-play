@@ -98,7 +98,7 @@ type SortKey = 'revenue' | 'paying_customers' | 'commission_earned' | 'owed' | '
           </thead>
           <tbody>
             @for (a of rows(); track a.id) {
-              <tr>
+              <tr class="open" (click)="open(a.id, $event)">
                 <td>
                   <a [routerLink]="['/dashboard/referrals', a.id]" [queryParams]="{ month: month() }"><strong>{{ a.name }}</strong></a>
                   <br><span class="muted">{{ a.code }} · {{ rate(a.commission_rate) }}%</span>
@@ -143,6 +143,7 @@ type SortKey = 'revenue' | 'paying_customers' | 'commission_earned' | 'owed' | '
   styles: `
     :host { display: grid; gap: 18px; }
     .page-head { margin-bottom: 0; }
+    tr.open { cursor: pointer; }
     .head-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .month { width: auto; padding: 9px 12px; }
     .editor { padding: 22px; display: grid; gap: 14px; max-width: 760px; }
@@ -178,6 +179,12 @@ export class ReferralsComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   auth = inject(AuthService);
+
+  /** The whole row opens the ambassador; the name stays a real link for the keyboard. */
+  open(id: string, e: MouseEvent): void {
+    if ((e.target as HTMLElement).closest('a, button')) return;
+    this.router.navigate(['/dashboard/referrals', id], { queryParams: { month: this.month() } });
+  }
 
   readonly thisMonth = monthKey();
   month = signal(this.route.snapshot.queryParamMap.get('month') ?? previousMonthKey());
