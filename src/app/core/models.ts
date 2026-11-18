@@ -236,3 +236,45 @@ export interface Terms {
   last_updated: string;
   html: string;
 }
+
+export type IssueStatus = 'open' | 'waiting' | 'resolved';
+export type IssueCategory = 'playback' | 'payment' | 'account' | 'app' | 'other';
+
+/** An issue raised from Help. The device fields are copied when it's raised. */
+export interface Issue {
+  id: string;
+  title: string;
+  category: IssueCategory;
+  category_label: string;
+  status: IssueStatus;
+  /** "Open", "Waiting on you", "Resolved". */
+  status_label: string;
+  device_name: string;
+  platform: string;
+  app_version: string;
+  created_at: string;
+  last_message_at: string;
+  /** A reply from the other side that hasn't been opened yet. */
+  unread: boolean;
+  /** The team's view only. */
+  user?: { id: string; email: string; name: string };
+  /** On a single issue only. */
+  messages?: IssueMessage[];
+}
+
+export interface IssueMessage {
+  id: string;
+  from_staff: boolean;
+  /** "You" / "Blendy Play team" for the customer; names for the team. */
+  author: string;
+  body: string;
+  created_at: string;
+}
+
+export interface NewIssue {
+  title: string;
+  category: IssueCategory;
+  body: string;
+  /** One of the user's apps; null for "not about a device". Left out: their only app. */
+  device?: string | null;
+}

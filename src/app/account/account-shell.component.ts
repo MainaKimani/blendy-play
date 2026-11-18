@@ -24,6 +24,7 @@ import { AuthService } from '../core/auth.service';
       <nav class="tabs" aria-label="Account">
         <a routerLink="/account" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }">My account</a>
         <a routerLink="/account/payments" routerLinkActive="on">Payments</a>
+        <a routerLink="/account/help" routerLinkActive="on">Help</a>
         <a routerLink="/account/devices" routerLinkActive="on">Devices</a>
         <a routerLink="/account/security" routerLinkActive="on">Password and security</a>
       </nav>

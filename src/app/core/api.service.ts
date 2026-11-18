@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigService } from './config.service';
 import {
   AdminPayment, AdminPlan, AdminPlanChanges, AdminSubscription, AdminSubscriptionChanges, AdminUser,
-  AdminUserChanges, Me, MyDevices, MyPayment, MySubscription, Overview, Page, Plan, Release, StaffChanges, StaffMember,
+  AdminUserChanges, Issue, IssueStatus, Me, MyDevices, NewIssue, MyPayment, MySubscription, Overview, Page, Plan, Release, StaffChanges, StaffMember,
   StaffRole,
   Terms,
 } from './models';
@@ -63,6 +63,15 @@ export class ApiService {
   myDevices = () => this.get<MyDevices>('/auth/me/devices');
   signOutDevice = (id: string) => firstValueFrom(this.http.delete<void>(this.url(`/auth/me/devices/${id}`)));
 
+  // Help: the customer's issues
+  myIssues = () => this.get<Issue[]>('/support/issues');
+  myIssue = (id: string) => this.get<Issue>(`/support/issues/${id}`);
+  raiseIssue = (body: NewIssue) => firstValueFrom(this.http.post<Issue>(this.url('/support/issues'), body));
+  replyToIssue = (id: string, body: string) =>
+    firstValueFrom(this.http.post<{ status: IssueStatus; status_label: string }>(this.url(`/support/issues/${id}/messages`), { body }));
+  resolveIssue = (id: string) =>
+    firstValueFrom(this.http.post<{ status: IssueStatus; status_label: string }>(this.url(`/support/issues/${id}/resolve`), {}));
+
   // The admin dashboard
   overview = (days: number) => this.get<Overview>('/dashboard/overview', { days });
   users = (q: Query) => this.get<Page<AdminUser>>('/dashboard/users', q);
@@ -85,6 +94,12 @@ export class ApiService {
     firstValueFrom(this.http.patch<AdminPlan>(this.url(`/dashboard/plans/${id}`), body));
   deletePlan = (id: string) => firstValueFrom(this.http.delete<void>(this.url(`/dashboard/plans/${id}`)));
   payments = (q: Query) => this.get<Page<AdminPayment>>('/dashboard/payments', q);
+  issues = (q: Query) => this.get<Page<Issue>>('/dashboard/issues', q);
+  issue = (id: string) => this.get<Issue>(`/dashboard/issues/${id}`);
+  answerIssue = (id: string, body: string) =>
+    firstValueFrom(this.http.post<{ status: IssueStatus; status_label: string }>(this.url(`/dashboard/issues/${id}/messages`), { body }));
+  setIssueStatus = (id: string, status: IssueStatus) =>
+    firstValueFrom(this.http.patch<Issue>(this.url(`/dashboard/issues/${id}`), { status }));
   subscriptions = (q: Query) =>
     this.get<Page<AdminSubscription> & { state_counts: Record<string, number> }>('/dashboard/subscriptions', q);
 }
