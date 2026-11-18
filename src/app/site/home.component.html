@@ -23,26 +23,38 @@
     <img class="hero-bg" src="screenshots/hero-app.webp" width="1700" height="890" fetchpriority="high"
          alt="The Blendy Play home screen, with a featured film and a Continue Watching row">
     <div class="hero-copy">
-      <h1>Watch without the noise.</h1>
+      <h1><span>All your shows.</span> <span class="neon">One remote.</span></h1>
       <p class="lede">
-        Blendy Play is the ad-free way to watch films and shows on your phone, your TV and your
-        computer. No pop-ups, no redirects, no trackers. Just the picture.
+        Films and shows from across the streaming platforms, under one roof, on your phone, your TV
+        and your computer. No ads, no pop-ups, no redirects. Just the picture.
       </p>
       <div class="actions">
-        <a class="btn" href="#download">Download Blendy Play</a>
+        <a class="btn" href="#download">Download Blendy Play@if (release(); as r) { {{ r.version }}}</a>
         <a class="btn ghost" href="#screenshots">See it in action</a>
       </div>
       <p class="from">From {{ money(plans()[0].price, plans()[0].currency) }} a week, paid with M-Pesa.</p>
     </div>
   </section>
 
+  <!-- What's on, by kind rather than by platform: Blendy Play isn't affiliated with any streaming
+       service (Terms 3.1), so no platform names or logos here. -->
+  <section class="kinds">
+    <h2>Everything you'd open five apps for.</h2>
+    <ul class="tiles">
+      @for (k of kinds; track k) { <li>{{ k }}</li> }
+      <li class="more"><span aria-hidden="true">+</span> many more</li>
+    </ul>
+    <p class="section-lede">
+      One app, one weekly or monthly payment, and no switching between apps to find something to watch.
+    </p>
+  </section>
+
   <section class="story">
     <div class="story-text">
-      <h2>Streaming shouldn't feel like a minefield.</h2>
+      <h2>Streaming shouldn't mean 5+ subscriptions.</h2>
       <p>
-        Free streaming pays for itself with pop-ups, fake download buttons and redirects to places you
-        never meant to go. On a TV remote it's worse: one wrong click and you're three screens deep,
-        hunting for the way back to your film.
+        Your favourite shows are spread across different platforms, each with its own app and its own
+        bill. The free alternatives pay for themselves with pop-ups, fake download buttons and redirects.
       </p>
     </div>
     <h2 class="clears-head">Blendy clears the room.</h2>

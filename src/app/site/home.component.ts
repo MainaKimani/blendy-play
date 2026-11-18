@@ -117,6 +117,7 @@ export class HomeComponent implements OnInit {
     const pad = (n: number) => String(n).padStart(2, '0');
     return { h: pad(Math.floor(left / 3600)), m: pad(Math.floor(left / 60) % 60), s: pad(left % 60) };
   });
+  kinds = ['Blockbusters', 'Series', 'Kids & family', 'Anime', 'Documentaries'];
   money = money;
   day = day;
   homePath = homePath;
