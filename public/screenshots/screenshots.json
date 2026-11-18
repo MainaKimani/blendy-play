@@ -5,8 +5,16 @@
       "caption": "Welcome: create an account or sign in"
     },
     {
+      "src": "screenshots/phone-register.webp",
+      "caption": "Create your account, with a referral code if you have one"
+    },
+    {
       "src": "screenshots/phone-verify.webp",
       "caption": "Confirm your email with a 4-digit code"
+    },
+    {
+      "src": "screenshots/phone-key.webp",
+      "caption": "Optional: create a server key to sync across your devices"
     },
     {
       "src": "screenshots/phone-plans.webp",
@@ -31,8 +39,16 @@
       "caption": "Welcome: create an account or sign in"
     },
     {
+      "src": "screenshots/tv-register.webp",
+      "caption": "Create your account, with a referral code if you have one"
+    },
+    {
       "src": "screenshots/tv-verify.webp",
       "caption": "Confirm your email with a 4-digit code"
+    },
+    {
+      "src": "screenshots/tv-key.webp",
+      "caption": "Optional: create a server key to sync across your devices"
     },
     {
       "src": "screenshots/tv-plans.webp",
@@ -57,8 +73,16 @@
       "caption": "Welcome: create an account or sign in"
     },
     {
+      "src": "screenshots/desktop-register.webp",
+      "caption": "Create your account, with a referral code if you have one"
+    },
+    {
       "src": "screenshots/desktop-verify.webp",
       "caption": "Confirm your email with a 4-digit code"
+    },
+    {
+      "src": "screenshots/desktop-key.webp",
+      "caption": "Optional: create a server key to sync across your devices"
     },
     {
       "src": "screenshots/desktop-plans.webp",
