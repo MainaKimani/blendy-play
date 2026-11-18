@@ -266,7 +266,7 @@ export class ReferralsComponent implements OnInit {
       this.notice.set(
         res.invited
           ? `${res.ambassador.email} is now an ambassador with the code ${res.ambassador.code}. We emailed them a link to choose a password.`
-          : `${res.ambassador.email} is now an ambassador with the code ${res.ambassador.code}. They can sign in with their existing password.`,
+          : `${res.ambassador.email} is now an ambassador with the code ${res.ambassador.code}. We emailed them their code and a link to their page; they sign in with their existing password.`,
       );
       this.load();
     } catch (err) {
