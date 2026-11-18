@@ -15,6 +15,9 @@ import { AuthService } from '../core/auth.service';
         @if (auth.isAdmin()) {
           <a class="btn ghost small" routerLink="/dashboard">Dashboard</a>
         }
+        @if (auth.me()?.is_ambassador) {
+          <a class="btn ghost small" routerLink="/ambassador">Ambassador page</a>
+        }
         <button class="btn ghost small" type="button" (click)="auth.signOut('/')">Sign out</button>
       </div>
     </header>

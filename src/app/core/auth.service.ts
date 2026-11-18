@@ -142,3 +142,8 @@ export class AuthService {
     write(REFRESH, refresh);
   }
 }
+
+/** Where an account lands after signing in: the dashboard, the ambassador page, or My account. */
+export function homePath(me: Pick<Me, 'is_admin' | 'is_ambassador'>): string {
+  return me.is_admin ? '/dashboard' : me.is_ambassador ? '/ambassador' : '/account';
+}

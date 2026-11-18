@@ -10,6 +10,8 @@ export interface Me {
   is_admin: boolean;
   /** Super-admin: can change things in the dashboard, staff included. */
   is_superadmin: boolean;
+  /** An ambassador: has their own page at /ambassador. */
+  is_ambassador: boolean;
   email_verified: boolean;
   created_at: string;
 }
@@ -108,6 +110,9 @@ export interface AdminUser {
   payments?: AdminPayment[];
   /** Devices signed in now (on the customer's detail only). */
   devices?: Device[];
+  /** The ambassador who referred this customer (on the detail only). */
+  referral?: CustomerReferral | null;
+  is_ambassador?: boolean;
 }
 
 export type AdminUserChanges = Partial<
@@ -277,4 +282,132 @@ export interface NewIssue {
   body: string;
   /** One of the user's apps; null for "not about a device". Left out: their only app. */
   device?: string | null;
+}
+
+// --- Referrals: ambassadors earn commission on the customers they bring ---
+
+export interface CustomerReferral {
+  code: string;
+  ambassador: string;
+  ambassador_id: string;
+  source: 'signup' | 'admin';
+  window_ends_at: string | null;
+}
+
+/** One ambassador's numbers for a month. Money is a decimal string in KES. */
+export interface AmbassadorFigures {
+  month: string;
+  new_referrals: number;
+  total_referrals: number;
+  paying_customers: number;
+  active_subscriptions: number;
+  payments: number;
+  revenue: string;
+  commission_earned: string;
+  reversals: string;
+  paid_out: string;
+  /** Owed now: earned, less reversals, less payouts. Negative after a refund that was paid out. */
+  owed: string;
+}
+
+export interface MonthPoint {
+  month: string;
+  revenue: string;
+  commission: string;
+}
+
+export interface AmbassadorSummary {
+  code: string;
+  is_active: boolean;
+  commission_rate: string;
+  figures: AmbassadorFigures;
+  series: MonthPoint[];
+}
+
+
+export interface ReferredCustomer {
+  id: number;
+  /** Masked for the ambassador (wan***mau@gmail.com); full for staff. */
+  email: string;
+  customer_id?: string;
+  joined_at: string;
+  plan: string | null;
+  subscription: SubState;
+  period_end: string | null;
+  window_ends_at: string | null;
+  commission: string;
+  source: 'signup' | 'admin';
+}
+
+export interface Ambassador {
+  id: string;
+  code: string;
+  name: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  user_id: string;
+  /** False until they've used their invitation to choose a password. */
+  has_password: boolean;
+  commission_rate: string;
+  payout_phone: string;
+  is_active: boolean;
+  notes: string;
+  created_at: string;
+}
+
+export interface AmbassadorRow extends Ambassador {
+  figures: AmbassadorFigures;
+}
+
+export interface ReportEmailSent {
+  kind: 'ambassador' | 'admin';
+  to: string;
+  ambassador_id: string | null;
+  sent_at: string;
+}
+
+export interface ReferralsOverview {
+  month: string;
+  ambassadors: AmbassadorRow[];
+  totals: Partial<Record<keyof AmbassadorFigures, string | number>>;
+  emails_sent: ReportEmailSent[];
+}
+
+export interface AmbassadorPayout {
+  id: number;
+  month: string;
+  amount: string;
+  mpesa_reference: string;
+  paid_at: string;
+}
+
+export interface AmbassadorDetail extends Ambassador {
+  figures: AmbassadorFigures;
+  series: MonthPoint[];
+  payouts: AmbassadorPayout[];
+}
+
+export interface CommissionRow {
+  id: number;
+  date: string;
+  ambassador: string;
+  email: string;
+  plan: string;
+  payment_amount: string;
+  rate: string;
+  amount: string;
+  status: 'earned' | 'reversed';
+  reversed_at: string | null;
+  /** False for a line earned earlier but reversed in this month. */
+  earned_this_month: boolean;
+}
+
+export type AmbassadorChanges = Partial<
+  Pick<Ambassador, 'first_name' | 'last_name' | 'code' | 'commission_rate' | 'payout_phone' | 'is_active' | 'notes'>
+>;
+
+export interface NewAmbassador extends AmbassadorChanges {
+  email: string;
+  code: string;
 }

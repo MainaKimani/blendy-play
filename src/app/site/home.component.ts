@@ -3,7 +3,7 @@ import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angula
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ApiService } from '../core/api.service';
-import { AuthService } from '../core/auth.service';
+import { AuthService, homePath } from '../core/auth.service';
 import { ConfigService } from '../core/config.service';
 import { Plan, Release, ReleaseFile, ReleasePlatform } from '../core/models';
 import { day, money } from '../core/format';
@@ -119,6 +119,7 @@ export class HomeComponent implements OnInit {
   });
   money = money;
   day = day;
+  homePath = homePath;
 
   /** The downloads in a fixed order: phones and TVs first, then desktop. */
   files = computed<(ReleaseFile & { platform: ReleasePlatform })[]>(() => {
@@ -228,8 +229,37 @@ export class HomeComponent implements OnInit {
     setTimeout(() => this.glass.set('gone'), SHATTER_MS);
   }
 
+  /** An ambassador's code from ?ref=, kept for this browser so it survives moving around the site. */
+  referralCode = signal<string | null>(null);
+  referralCopied = signal(false);
+
+  private readReferral(): void {
+    const fromUrl = (new URLSearchParams(location.search).get('ref') ?? '').replace(/\s+/g, '').toUpperCase();
+    let code = /^[A-Z0-9]{4,20}$/.test(fromUrl) ? fromUrl : '';
+    try {
+      if (code) localStorage.setItem('bp-ref', code);
+      else code = localStorage.getItem('bp-ref') ?? '';
+    } catch { /* storage blocked: the code still shows on this visit */ }
+    if (!code) return;
+    this.api
+      .checkReferralCode(code)
+      .then((r) => {
+        if (r.valid) this.referralCode.set(code);
+        else try { localStorage.removeItem('bp-ref'); } catch { /* ignore */ }
+      })
+      .catch(() => {});
+  }
+
+  copyReferral(code: string): void {
+    navigator.clipboard?.writeText(code).then(() => {
+      this.referralCopied.set(true);
+      setTimeout(() => this.referralCopied.set(false), 1800);
+    });
+  }
+
   ngOnInit(): void {
     this.auth.ensureMe();
+    this.readReferral();
     firstValueFrom(this.http.get<Record<string, { src: string; caption: string }[]>>('/screenshots/screenshots.json'))
       .then((s) => this.shots.set(s))
       .catch(() => {});

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, signedInGuard, unverifiedGuard } from './core/guards';
+import { adminGuard, ambassadorGuard, signedInGuard, unverifiedGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./site/home.component').then((m) => m.HomeComponent) },
@@ -34,6 +34,12 @@ export const routes: Routes = [
     path: 'account',
     canActivate: [signedInGuard],
     loadChildren: () => import('./account/account.routes').then((m) => m.ACCOUNT_ROUTES),
+  },
+  {
+    path: 'ambassador',
+    title: 'Ambassador · Blendy Play',
+    canActivate: [ambassadorGuard],
+    loadComponent: () => import('./ambassador/ambassador.component').then((m) => m.AmbassadorComponent),
   },
   {
     path: 'terms',

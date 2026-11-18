@@ -3,7 +3,7 @@ import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
-import { AuthService } from '../core/auth.service';
+import { AuthService, homePath } from '../core/auth.service';
 import { errorMessage } from '../core/errors';
 
 /**
@@ -88,7 +88,7 @@ export class VerifyComponent implements OnDestroy {
     try {
       const me = await this.api.verifyEmail(this.code);
       this.auth.setMe(me);
-      this.router.navigateByUrl(me.is_admin ? '/dashboard' : '/account');
+      this.router.navigateByUrl(homePath(me));
     } catch (e) {
       this.error.set(errorMessage(e, "That code didn't work. Try again."));
       this.code = '';

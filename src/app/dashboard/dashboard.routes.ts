@@ -14,6 +14,8 @@ export const DASHBOARD_ROUTES: Routes = [
       { path: 'issues/:id', title: 'Issue · Blendy Studio', loadComponent: () => import('./issue-detail.component').then((m) => m.IssueDetailComponent) },
       { path: 'payments', title: 'Payments · Blendy Studio', loadComponent: () => import('./payments.component').then((m) => m.PaymentsComponent) },
       { path: 'plans', title: 'Plans · Blendy Studio', loadComponent: () => import('./plans.component').then((m) => m.PlansComponent) },
+      { path: 'referrals', title: 'Referrals · Blendy Studio', loadComponent: () => import('./referrals.component').then((m) => m.ReferralsComponent) },
+      { path: 'referrals/:id', title: 'Ambassador · Blendy Studio', loadComponent: () => import('./ambassador-detail.component').then((m) => m.AmbassadorDetailComponent) },
       { path: 'staff', title: 'Staff · Blendy Studio', loadComponent: () => import('./staff.component').then((m) => m.StaffComponent) },
       { path: 'subscriptions', title: 'Subscriptions · Blendy Studio', loadComponent: () => import('./subscriptions.component').then((m) => m.SubscriptionsComponent) },
     ],

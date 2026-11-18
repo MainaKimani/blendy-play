@@ -378,3 +378,11 @@ h1 {
     40%, 60% { transform: translateX(8px); }
   }
 }
+
+/* An ambassador's referral code, from ?ref= in the link. */
+.ref-note {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  margin-top: 18px; padding: 12px 16px; border-radius: var(--radius-m);
+  border: 1px solid rgba(0, 229, 255, 0.35); background: rgba(0, 229, 255, 0.06); color: #c9c9d3; font-size: 15px;
+}
+.ref-note strong { color: var(--text); letter-spacing: 0.06em; }

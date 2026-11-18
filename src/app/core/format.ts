@@ -43,3 +43,24 @@ export function ago(iso: string | null | undefined): string {
   if (days < 7) return days === 1 ? 'yesterday' : `${days} days ago`;
   return day(iso);
 }
+
+/** "2027-01" for the month a date falls in, in Nairobi time. */
+export function monthKey(date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', timeZone: nairobi }).formatToParts(date);
+  return `${parts.find((p) => p.type === 'year')!.value}-${parts.find((p) => p.type === 'month')!.value}`;
+}
+
+/** The month before "2027-01": "2026-12". */
+export function previousMonthKey(key = monthKey()): string {
+  const [y, m] = key.split('-').map(Number);
+  return m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, '0')}`;
+}
+
+/** "2027-01" -> "January 2027"; short: "Jan". */
+export function monthName(key: string, short = false): string {
+  const [y, m] = key.split('-').map(Number);
+  const d = new Date(Date.UTC(y, m - 1, 15));
+  return short
+    ? d.toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' })
+    : d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+}

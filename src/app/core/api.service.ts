@@ -3,7 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from './config.service';
 import {
-  AdminPayment, AdminPlan, AdminPlanChanges, AdminSubscription, AdminSubscriptionChanges, AdminUser,
+  AdminPayment, AmbassadorChanges, AmbassadorDetail, AmbassadorSummary, Ambassador, CommissionRow, CustomerReferral,
+  NewAmbassador, ReferralsOverview, ReferredCustomer, AdminPlan, AdminPlanChanges, AdminSubscription, AdminSubscriptionChanges, AdminUser,
   AdminUserChanges, Issue, IssueStatus, Me, MyDevices, NewIssue, MyPayment, MySubscription, Overview, Page, Plan, Release, StaffChanges, StaffMember,
   StaffRole,
   Terms,
@@ -71,6 +72,51 @@ export class ApiService {
     firstValueFrom(this.http.post<{ status: IssueStatus; status_label: string }>(this.url(`/support/issues/${id}/messages`), { body }));
   resolveIssue = (id: string) =>
     firstValueFrom(this.http.post<{ status: IssueStatus; status_label: string }>(this.url(`/support/issues/${id}/resolve`), {}));
+
+  // Referral codes and the ambassador's own page
+  checkReferralCode = (code: string) => this.get<{ valid: boolean }>('/referrals/check', { code });
+  ambassadorSummary = (month?: string) => this.get<AmbassadorSummary>('/ambassador/summary', { month });
+  ambassadorCustomers = () => this.get<ReferredCustomer[]>('/ambassador/customers');
+  ambassadorReport = (month: string) => this.download('/ambassador/report.xlsx', { month });
+
+  // Referrals in the dashboard
+  referrals = (month?: string) => this.get<ReferralsOverview>('/dashboard/referrals', { month });
+  referralsReport = (month: string) => this.download('/dashboard/referrals/report.xlsx', { month });
+  resendReport = (month: string, ambassador_id?: string) =>
+    firstValueFrom(this.http.post<void>(this.url('/dashboard/referrals/resend'), { month, ambassador_id }));
+  ambassadors = () => this.get<Ambassador[]>('/dashboard/ambassadors');
+  addAmbassador = (body: NewAmbassador) =>
+    firstValueFrom(this.http.post<{ invited: boolean; ambassador: Ambassador }>(this.url('/dashboard/ambassadors'), body));
+  ambassador = (id: string, month?: string) => this.get<AmbassadorDetail>(`/dashboard/ambassadors/${id}`, { month });
+  updateAmbassador = (id: string, body: AmbassadorChanges) =>
+    firstValueFrom(this.http.patch<Ambassador>(this.url(`/dashboard/ambassadors/${id}`), body));
+  ambassadorCustomersAdmin = (id: string) => this.get<ReferredCustomer[]>(`/dashboard/ambassadors/${id}/customers`);
+  ambassadorReportAdmin = (id: string, month: string) =>
+    this.download(`/dashboard/ambassadors/${id}/report.xlsx`, { month });
+  recordPayout = (id: string, body: { month: string; amount: string; mpesa_reference: string }) =>
+    firstValueFrom(this.http.post<{ id: number; owed: string }>(this.url(`/dashboard/ambassadors/${id}/payouts`), body));
+  deletePayout = (id: string, payoutId: number) =>
+    firstValueFrom(this.http.delete<void>(this.url(`/dashboard/ambassadors/${id}/payouts/${payoutId}`)));
+  commission = (month: string, ambassador?: string) =>
+    this.get<CommissionRow[]>('/dashboard/commission', { month, ambassador });
+  reverseCommission = (id: number, reason: string) =>
+    firstValueFrom(this.http.post<void>(this.url(`/dashboard/commission/${id}/reverse`), { reason }));
+  setUserReferral = (userId: string, code: string) =>
+    firstValueFrom(this.http.put<CustomerReferral | null>(this.url(`/dashboard/users/${userId}/referral`), { code }));
+
+  /** Fetch a file (signed in) and hand it to the browser to save. */
+  private async download(path: string, q: Query): Promise<void> {
+    const res = await firstValueFrom(
+      this.http.get(this.url(path), { params: params(q), responseType: 'blob', observe: 'response' }),
+    );
+    const name = /filename="([^"]+)"/.exec(res.headers.get('content-disposition') ?? '')?.[1] ?? 'report.xlsx';
+    const href = URL.createObjectURL(res.body!);
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(href), 1000);
+  }
 
   // The admin dashboard
   overview = (days: number) => this.get<Overview>('/dashboard/overview', { days });

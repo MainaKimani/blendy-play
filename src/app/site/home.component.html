@@ -8,8 +8,8 @@
     <a href="#screenshots" class="hide-s">Screenshots</a>
     <a href="#download" class="hide-s">Download</a>
     @if (auth.me(); as me) {
-      <a class="btn ghost small" [routerLink]="me.is_admin ? '/dashboard' : '/account'">
-        {{ me.is_admin ? 'Dashboard' : 'My account' }}
+      <a class="btn ghost small" [routerLink]="homePath(me)">
+        {{ me.is_admin ? 'Dashboard' : me.is_ambassador ? 'Ambassador page' : 'My account' }}
       </a>
     } @else {
       <a class="btn ghost small" routerLink="/signin">Sign in</a>
@@ -139,6 +139,14 @@
 
   <section class="download" id="download">
     <h2>Get Blendy Play.</h2>
+    @if (referralCode(); as code) {
+      <!-- From an ambassador's link (?ref=CODE). The apps are installed from here, not a store, so the code
+           can't travel with the install: show it so the customer can type it in the app. -->
+      <div class="ref-note" role="status">
+        <span>Your referral code: <strong>{{ code }}</strong>. Type it when you create your account in the app.</span>
+        <button class="btn ghost small" type="button" (click)="copyReferral(code)">{{ referralCopied() ? 'Copied' : 'Copy' }}</button>
+      </div>
+    }
     <!-- Until the launch moment the downloads sit under frosted glass with a countdown on top.
          At zero the glass shatters and the section works as normal. -->
     <div class="vault" [class.sealed]="glass() !== 'gone'">

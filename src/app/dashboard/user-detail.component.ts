@@ -38,6 +38,11 @@ function dateInput(iso: string | null): string {
         <div><dt>Server key</dt><dd>{{ u.has_cinejoy_account ? 'Saved' : 'Not saved' }}</dd></div>
         <div><dt>Email</dt><dd>{{ u.email_verified ? 'Confirmed' : 'Not confirmed' }}</dd></div>
         <div><dt>Account</dt><dd>{{ u.is_deleted ? 'Deleted' : u.is_active ? 'Active' : 'Suspended' }}</dd></div>
+        <div><dt>Referred by</dt><dd>
+          @if (u.referral; as r) {
+            <a [routerLink]="['/dashboard/referrals', r.ambassador_id]">{{ r.ambassador }} ({{ r.code }})</a>
+          } @else { — }
+        </dd></div>
       </dl>
 
       @if (u.is_deleted) {
@@ -142,6 +147,29 @@ function dateInput(iso: string | null): string {
         </div>
       }
 
+      @if (auth.isSuperAdmin() && !u.is_deleted) {
+        <form class="panel referral" (ngSubmit)="saveReferral(u)" novalidate>
+          <div>
+            <h2>Referral</h2>
+            <p class="muted">
+              @if (u.referral; as r) {
+                Linked to {{ r.ambassador }} ({{ r.code }}){{ r.source === 'signup' ? ' with the code at sign-up' : ' by a super-admin' }}.
+                @if (r.window_ends_at) { Earns commission until {{ day(r.window_ends_at) }}. }
+              } @else {
+                No ambassador. Add one if the customer forgot to enter a code.
+              }
+            </p>
+          </div>
+          <div class="ref-row">
+            <label class="visually-hidden" for="ref-code">Ambassador's code</label>
+            <input id="ref-code" class="input upper" name="ref_code" maxlength="20" placeholder="Ambassador's code" [(ngModel)]="referralDraft">
+            <button class="btn small" type="submit" [disabled]="referralBusy()">{{ referralDraft.trim() ? 'Save' : 'Remove link' }}</button>
+          </div>
+          @if (referralErr()) { <p class="form-err" role="alert">{{ referralErr() }}</p> }
+          @if (referralOk()) { <p class="form-ok" role="status">{{ referralOk() }}</p> }
+        </form>
+      }
+
       <h2>Devices</h2>
       <div class="dt-wrap devices">
         @if (u.devices?.length) {
@@ -231,6 +259,12 @@ function dateInput(iso: string | null): string {
     .lifetime { display: grid; gap: 6px; justify-items: start; padding-top: 14px; border-top: 1px solid var(--line); }
     select.input { appearance: auto; }
     .devices { margin-bottom: 28px; }
+    .referral { padding: 18px 22px; display: grid; gap: 12px; margin-bottom: 28px; }
+    .referral h2 { margin: 0; }
+    .referral .muted { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .ref-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .ref-row .input { width: auto; max-width: 240px; }
+    .upper { text-transform: uppercase; }
     @media (max-width: 1100px) { .editors { grid-template-columns: 1fr; } }
     @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
   `,
@@ -285,6 +319,27 @@ export class UserDetailComponent implements OnInit {
   phone = phone;
   payPill = paymentPill;
 
+  referralDraft = '';
+  referralBusy = signal(false);
+  referralErr = signal('');
+  referralOk = signal('');
+
+  /** Link the customer to an ambassador by code, or remove the link with an empty code. */
+  async saveReferral(u: AdminUser): Promise<void> {
+    this.referralBusy.set(true);
+    this.referralErr.set('');
+    this.referralOk.set('');
+    try {
+      const r = await this.api.setUserReferral(u.id, this.referralDraft.trim().toUpperCase());
+      this.referralOk.set(r ? `Linked to ${r.ambassador} (${r.code}).` : 'Link removed.');
+      this.show(await this.api.user(u.id));
+    } catch (err) {
+      this.referralErr.set(errorMessage(err));
+    } finally {
+      this.referralBusy.set(false);
+    }
+  }
+
   ngOnInit(): void {
     this.api.user(this.id()).then((u) => this.show(u)).catch((e) => this.error.set(errorMessage(e, "Couldn't load this user.")));
     this.api.adminPlans().then((p) => this.plans.set(p)).catch(() => this.plans.set([]));
@@ -297,6 +352,7 @@ export class UserDetailComponent implements OnInit {
   /** Put a fresh copy from the server on screen and into both forms. */
   private show(u: AdminUser): void {
     this.user.set(u);
+    this.referralDraft = u.referral?.code ?? '';
     this.details = {
       first_name: u.first_name,
       last_name: u.last_name,

@@ -81,6 +81,7 @@ export class DashboardShellComponent {
     { path: 'issues', label: 'Issues', icon: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.9A8 8 0 1 1 21 12zM8.5 10h7M8.5 14h4' },
     { path: 'payments', label: 'Payments', icon: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5zM3 10h18M7 15h3' },
     { path: 'plans', label: 'Plans', icon: 'M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM7.5 7.5h.01' },
+    { path: 'referrals', label: 'Referrals', icon: 'M16 11a4 4 0 1 0-8 0M12 15c-4 0-7 2-7 4.5V21h14v-1.5c0-2.5-3-4.5-7-4.5zM19 4l2 2-2 2M21 6h-5' },
     { path: 'subscriptions', label: 'Subscriptions', icon: 'M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4' },
   ];
   private staffItem = {
