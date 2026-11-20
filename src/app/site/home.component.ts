@@ -266,7 +266,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.auth.ensureMe();
     this.readReferral();
-    firstValueFrom(this.http.get<Record<string, { src: string; caption: string }[]>>('/screenshots/screenshots.json'))
+    firstValueFrom(this.http.get<Record<string, { src: string; caption: string }[]>>('/screenshots/screenshots-172.json'))
       .then((s) => this.shots.set(s))
       .catch(() => {});
     this.api.plans().then((p) => p.length && this.plans.set(p)).catch(() => {});
