@@ -1,0 +1,128 @@
+{
+  "phone": [
+    {
+      "src": "screenshots/phone-welcome-172.webp",
+      "caption": "Welcome: create an account or sign in"
+    },
+    {
+      "src": "screenshots/phone-register-172.webp",
+      "caption": "Create your account, with a referral code if you have one"
+    },
+    {
+      "src": "screenshots/phone-verify-172.webp",
+      "caption": "Confirm your email with a 4-digit code"
+    },
+    {
+      "src": "screenshots/phone-key-172.webp",
+      "caption": "Optional: create a server key to sync across your devices"
+    },
+    {
+      "src": "screenshots/phone-plans-172.webp",
+      "caption": "Choose a plan and pay with M-Pesa"
+    },
+    {
+      "src": "screenshots/phone-subscription-172.webp",
+      "caption": "Your subscription at a glance"
+    },
+    {
+      "src": "screenshots/phone-ending-172.webp",
+      "caption": "A reminder before your plan ends, with one-tap renew"
+    },
+    {
+      "src": "screenshots/phone-renew-172.webp",
+      "caption": "Renew in one tap: your plan and M-Pesa number are ready"
+    },
+    {
+      "src": "screenshots/phone-listing-trending-172.webp",
+      "caption": "Browse what’s trending, with no ads"
+    },
+    {
+      "src": "screenshots/phone-listing-awards-172.webp",
+      "caption": "Award-winning films and shows"
+    }
+  ],
+  "tv": [
+    {
+      "src": "screenshots/tv-welcome-172.webp",
+      "caption": "Welcome: create an account or sign in"
+    },
+    {
+      "src": "screenshots/tv-register-172.webp",
+      "caption": "Create your account, with a referral code if you have one"
+    },
+    {
+      "src": "screenshots/tv-verify-172.webp",
+      "caption": "Confirm your email with a 4-digit code"
+    },
+    {
+      "src": "screenshots/tv-key-172.webp",
+      "caption": "Optional: create a server key to sync across your devices"
+    },
+    {
+      "src": "screenshots/tv-plans-172.webp",
+      "caption": "Choose a plan and pay with M-Pesa"
+    },
+    {
+      "src": "screenshots/tv-subscription-172.webp",
+      "caption": "Your subscription at a glance"
+    },
+    {
+      "src": "screenshots/tv-ending-172.webp",
+      "caption": "A reminder before your plan ends, with one-tap renew"
+    },
+    {
+      "src": "screenshots/tv-renew-172.webp",
+      "caption": "Renew in one tap: your plan and M-Pesa number are ready"
+    },
+    {
+      "src": "screenshots/tv-listing-trending-172.webp",
+      "caption": "Browse what’s trending, with no ads"
+    },
+    {
+      "src": "screenshots/tv-listing-awards-172.webp",
+      "caption": "Award-winning films and shows"
+    }
+  ],
+  "desktop": [
+    {
+      "src": "screenshots/desktop-welcome-172.webp",
+      "caption": "Welcome: create an account or sign in"
+    },
+    {
+      "src": "screenshots/desktop-register-172.webp",
+      "caption": "Create your account, with a referral code if you have one"
+    },
+    {
+      "src": "screenshots/desktop-verify-172.webp",
+      "caption": "Confirm your email with a 4-digit code"
+    },
+    {
+      "src": "screenshots/desktop-key-172.webp",
+      "caption": "Optional: create a server key to sync across your devices"
+    },
+    {
+      "src": "screenshots/desktop-plans-172.webp",
+      "caption": "Choose a plan and pay with M-Pesa"
+    },
+    {
+      "src": "screenshots/desktop-subscription-172.webp",
+      "caption": "Your subscription at a glance"
+    },
+    {
+      "src": "screenshots/desktop-ending-172.webp",
+      "caption": "A reminder before your plan ends, with one-tap renew"
+    },
+    {
+      "src": "screenshots/desktop-renew-172.webp",
+      "caption": "Renew in one tap: your plan and M-Pesa number are ready"
+    },
+    {
+      "src": "screenshots/desktop-listing-trending-172.webp",
+      "caption": "Browse what’s trending, with no ads"
+    },
+    {
+      "src": "screenshots/desktop-listing-awards-172.webp",
+      "caption": "Award-winning films and shows"
+    }
+  ]
+}
