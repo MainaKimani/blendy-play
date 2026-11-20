@@ -25,6 +25,12 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/reset-password.component').then((m) => m.ResetPasswordComponent),
   },
   {
+    // "Stop renewal reminders" in the reminder emails. No sign-in.
+    path: 'reminders-off',
+    title: 'Renewal reminders · Blendy Play',
+    loadComponent: () => import('./auth/reminders-off.component').then((m) => m.RemindersOffComponent),
+  },
+  {
     path: 'verify',
     title: 'Confirm your email · Blendy Play',
     canActivate: [unverifiedGuard],
