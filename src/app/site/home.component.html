@@ -32,7 +32,7 @@
         <a class="btn" href="#download">Download Blendy Play@if (release(); as r) { {{ r.version }}}</a>
         <a class="btn ghost" href="#screenshots">See it in action</a>
       </div>
-      <p class="from">From {{ money(plans()[0].price, plans()[0].currency) }} a week, paid with M-Pesa.</p>
+      <p class="from">From {{ money(plans()[0].price, plans()[0].currency) }} {{ per(plans()[0]) }}, paid with M-Pesa.</p>
     </div>
   </section>
 
@@ -93,7 +93,7 @@
         <dt>Costs</dt>
         <dd>
           @for (p of plans(); track p.code; let last = $last) {
-            {{ money(p.price, p.currency) }} {{ p.interval === 'WEEK' ? 'a week' : 'a month' }}@if (!last) {, or }
+            {{ money(p.price, p.currency) }} {{ per(p) }}@if (!last) {, or }
           }.@if (cheapestPerDay() >= 1) { About {{ money(cheapestPerDay()) }} a day.}
         </dd>
       </div>

@@ -132,8 +132,13 @@ export class HomeComponent implements OnInit {
     return bytes ? `${Math.max(1, Math.round(bytes / 1048576))} MB` : '';
   }
 
+  /** "a week", "a month", or "for 24 hours" for a day pass. */
+  per(p: Plan): string {
+    return { DAY: 'for 24 hours', WEEK: 'a week', MONTH: 'a month' }[p.interval] ?? '';
+  }
+
   cheapestPerDay = computed(() => {
-    const per = this.plans().map((p) => Number(p.price) / (p.duration_days ?? (p.interval === 'WEEK' ? 7 : 30)));
+    const per = this.plans().map((p) => Number(p.price) / (p.duration_days ?? ({ DAY: 1, WEEK: 7, MONTH: 30 }[p.interval] ?? 30)));
     return Math.round(Math.min(...per));
   });
 

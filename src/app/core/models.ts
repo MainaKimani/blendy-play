@@ -16,10 +16,13 @@ export interface Me {
   created_at: string;
 }
 
+/** DAY is a pass (shown as "24 hours"), not a repeating bill. */
+export type PlanInterval = 'DAY' | 'WEEK' | 'MONTH';
+
 export interface Plan {
   code: string;
   name: string;
-  interval: 'WEEK' | 'MONTH';
+  interval: PlanInterval;
   currency: string;
   price: string;
   duration_days?: number;
@@ -133,7 +136,7 @@ export interface AdminPlan {
   name: string;
   price: string;
   currency: string;
-  interval: 'WEEK' | 'MONTH';
+  interval: PlanInterval;
   duration_days: number;
   /** Shown on the paywall. Hidden plans stay for history. */
   is_active: boolean;

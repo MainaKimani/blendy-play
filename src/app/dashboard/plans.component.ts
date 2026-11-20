@@ -4,9 +4,9 @@ import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { errorMessage, fieldErrors } from '../core/errors';
 import { money } from '../core/format';
-import { AdminPlan, AdminPlanChanges } from '../core/models';
+import { AdminPlan, AdminPlanChanges, PlanInterval } from '../core/models';
 
-type Draft = { code: string; name: string; price: string; interval: 'WEEK' | 'MONTH'; duration_days: number | null; is_active: boolean };
+type Draft = { code: string; name: string; price: string; interval: PlanInterval; duration_days: number | null; is_active: boolean };
 
 const EMPTY: Draft = { code: '', name: '', price: '', interval: 'WEEK', duration_days: 7, is_active: true };
 
@@ -58,10 +58,12 @@ function slug(name: string): string {
           <label class="field">
             <span>Shown as</span>
             <select class="input" name="interval" [(ngModel)]="draft.interval">
+              <option value="DAY">24-hour pass</option>
               <option value="WEEK">Billed weekly</option>
               <option value="MONTH">Billed monthly</option>
             </select>
-            <span class="hint">The label in the app. The days above decide the length.</span>
+            <span class="hint">The label in the app. The days above decide the length. Plans
+              shown as a 24-hour pass get no reminder emails.</span>
           </label>
           <label class="check">
             <input type="checkbox" name="is_active" [(ngModel)]="draft.is_active">
@@ -95,7 +97,7 @@ function slug(name: string): string {
             <tbody>
               @for (p of list; track p.id) {
                 <tr [class.hidden-plan]="!p.is_active">
-                  <td>{{ p.name }} <span class="muted">{{ p.interval === 'WEEK' ? 'weekly' : 'monthly' }}</span></td>
+                  <td>{{ p.name }} <span class="muted">{{ intervalLabel[p.interval] }}</span></td>
                   <td class="muted">{{ p.code }}</td>
                   <td class="num">{{ money(p.price, p.currency) }}</td>
                   <td class="num">{{ p.duration_days }}</td>
@@ -156,6 +158,7 @@ export class PlansComponent implements OnInit {
   formErr = signal('');
   errors = signal<Record<string, string>>({});
   money = money;
+  intervalLabel: Record<PlanInterval, string> = { DAY: '24-hour pass', WEEK: 'weekly', MONTH: 'monthly' };
 
   ngOnInit(): void {
     this.load();
