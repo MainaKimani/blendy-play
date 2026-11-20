@@ -72,6 +72,18 @@ import { subscriptionPill } from '../shared/status';
     </form>
 
     <section class="panel block">
+      <h2>Renewal reminders</h2>
+      <label class="check">
+        <input type="checkbox" name="renewal_reminders" [checked]="auth.me()?.renewal_reminders ?? true"
+               [disabled]="remindersSaving()" (change)="setReminders($any($event.target))">
+        <span>Email me before my plan ends, and when it has ended
+          <small>The day before a weekly or monthly plan ends. Receipts and security emails come either way.</small></span>
+      </label>
+      @if (remindersMsg()) { <p class="form-ok" role="status">{{ remindersMsg() }}</p> }
+      @if (remindersErr()) { <p class="form-err" role="alert">{{ remindersErr() }}</p> }
+    </section>
+
+    <section class="panel block">
       <h2>Third-party server key</h2>
       <p class="muted">
         @if (auth.me()?.has_cinejoy_account) {
@@ -89,7 +101,10 @@ import { subscriptionPill } from '../shared/status';
     .sub-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
     .muted { color: var(--muted); font-size: 15px; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .hint { color: var(--muted); font-size: 12px; }
+    .hint, .check small { color: var(--muted); font-size: 12px; }
+    .check small { display: block; }
+    .check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; cursor: pointer; }
+    .check input { margin-top: 4px; accent-color: var(--magenta); }
     .row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
     .spinner { margin: 8px 0; }
     @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
@@ -105,6 +120,9 @@ export class DetailsComponent implements OnInit {
   saved = signal(false);
   error = signal('');
   errors = signal<Record<string, string>>({});
+  remindersSaving = signal(false);
+  remindersMsg = signal('');
+  remindersErr = signal('');
   money = money;
   day = day;
   pill = subscriptionPill;
@@ -113,6 +131,23 @@ export class DetailsComponent implements OnInit {
     const me = this.auth.me();
     if (me) this.form = { first_name: me.first_name, last_name: me.last_name, phone_number: phone(me.phone_number).replace('—', '') };
     this.api.mySubscription().then((s) => this.sub.set(s)).catch((e) => this.subError.set(errorMessage(e)));
+  }
+
+  async setReminders(box: HTMLInputElement): Promise<void> {
+    const on = box.checked;
+    this.remindersSaving.set(true);
+    this.remindersMsg.set('');
+    this.remindersErr.set('');
+    try {
+      this.auth.setMe(await this.api.updateMe({ renewal_reminders: on }));
+      this.remindersMsg.set(on ? 'Reminders are on.' : 'Reminders are off.');
+    } catch (e) {
+      this.remindersErr.set(errorMessage(e));
+      // Put the box back to what's saved.
+      box.checked = !on;
+    } finally {
+      this.remindersSaving.set(false);
+    }
   }
 
   async save(): Promise<void> {

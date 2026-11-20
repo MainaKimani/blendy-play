@@ -13,6 +13,8 @@ export interface Me {
   /** An ambassador: has their own page at /ambassador. */
   is_ambassador: boolean;
   email_verified: boolean;
+  /** The "ends soon" and "has ended" emails. Receipts don't depend on it. */
+  renewal_reminders: boolean;
   created_at: string;
 }
 

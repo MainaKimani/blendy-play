@@ -47,6 +47,10 @@ export class ApiService {
       this.http.post<{ detail: string }>(this.url('/auth/password-reset/confirm'), { token, new_password }),
     );
 
+  // "Stop renewal reminders" in a reminder email (no sign-in: the token)
+  remindersOff = (token: string) =>
+    firstValueFrom(this.http.post<{ detail: string }>(this.url('/reminders/off'), { token }));
+
   // Email verification after registering
   verifyEmail = (code: string) => firstValueFrom(this.http.post<Me>(this.url('/auth/verify-email'), { code }));
   resendCode = () =>
@@ -55,7 +59,7 @@ export class ApiService {
   // The signed-in customer
   mySubscription = () => this.get<MySubscription>('/me/subscription');
   myPayments = (page = 1) => this.get<Page<MyPayment>>('/payments/mine', { page });
-  updateMe = (body: Partial<Pick<Me, 'first_name' | 'last_name' | 'phone_number'>>) =>
+  updateMe = (body: Partial<Pick<Me, 'first_name' | 'last_name' | 'phone_number' | 'renewal_reminders'>>) =>
     firstValueFrom(this.http.patch<Me>(this.url('/auth/me'), body));
   changePassword = (current_password: string, new_password: string) =>
     firstValueFrom(this.http.post<void>(this.url('/auth/me/password'), { current_password, new_password }));
